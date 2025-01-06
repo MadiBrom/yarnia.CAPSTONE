@@ -321,11 +321,11 @@ body {
 .story-card p {
   margin: 8px 0;
   text-align: left;
-  color: #ad8733;
+  color: #816323;
 }
 
 .story-card a {
-  color: #ae7f28;
+  color: #483204;
 }
 
 .story-card a:hover {
@@ -381,6 +381,9 @@ body {
   max-width: 500px;
   width: 90%;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .modal-content h2 {
@@ -626,6 +629,10 @@ body {
   margin-bottom: 15px;
 }
 
+#story-card p {
+  color: #e1d2be;
+}
+
 .bookmark-item h3,
 .story-item h3 {
   margin: 0;
@@ -844,6 +851,10 @@ html {
   margin-bottom: 8px;
 }
 
+html.dark .form-group label {
+  color: rgb(216, 246, 213);
+}
+
 /* Input Field */
 .form-group input[type="text"],
 .form-group select,
@@ -891,6 +902,14 @@ html {
   text-align: left !important;
   margin: 0;
   padding: 0;
+}
+
+html.dark .ql-editor {
+  background-color: #586a45;
+}
+
+html.dark .ql-editor p {
+  color: #e9edc9;
 }
 
 /* Ensure alignment works properly */
@@ -1420,6 +1439,10 @@ html {
   margin: 0.5rem 0;
 }
 
+.story-single p {
+  color: #1d1e17;
+}
+
 .story-content {
   margin: 1.5rem 0;
   line-height: 1.6;
@@ -1871,7 +1894,7 @@ html.dark .sidebar {
 }
 
 html.dark .sidebar h2 {
-  color: #d4b87f; /* Warm muted gold for contrast */
+  color: #e7dac0; /* Warm muted gold for contrast */
 }
 
 html.dark .sidebar-menu li {
@@ -2277,7 +2300,7 @@ html.dark .bookmark-card button:nth-of-type(2):hover {
 html.dark p {
   font-size: 1.2em;
   text-align: center;
-  color: #c7b296; /* Softer warm yellow */
+  color: #e0d0bc; /* Softer warm yellow */
   margin-top: 20px;
 }
 
@@ -2490,7 +2513,7 @@ html.dark .user-email {
 }
 
 html.dark .user-role {
-  color: #d48a60; /* Muted red for roles */
+  color: #e8cebf; /* Muted red for roles */
 }
 
 /* Dark Mode for Register Form Container */

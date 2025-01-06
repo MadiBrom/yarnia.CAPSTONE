@@ -79,6 +79,32 @@ const seed = async () => {
         });
       }
 
+ // Create random followers
+const followerData = [];
+const maxRetries = 50;
+
+// Updated seed logic for followers
+for (let i = 0; i < users.length; i++) {
+  const followersCount = getRandomNumber(1, 10); // Random followers for each user
+  const followingUsers = new Set();
+
+  for (let j = 0; j < followersCount; j++) {
+    let followingId;
+    do {
+      followingId = users[getRandomNumber(0, users.length - 1)].id;
+    } while (followingId === users[i].id || followingUsers.has(followingId));
+
+    followingUsers.add(followingId);
+
+    await prisma.follower.create({
+      data: {
+        userId: users[i].id,
+        followingId,
+      },
+    });
+  }
+}
+
       // Create random bookmarks for each story
       for (let k = 0; k < getRandomNumber(0, 1000); k++) {
         const randomUser = users[getRandomNumber(0, users.length - 1)];

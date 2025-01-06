@@ -421,6 +421,15 @@ export const updateUserProfile = async (username, bio) => {
   });
 };
 
+
+export const fetchUserFollowerCount = async (userId) => {
+  const response = await fetch(`/api/users/${userId}/followers`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch follower count: ${response.statusText}`);
+  }
+  return response.json(); // Returns { followerCount: <number> }
+};
+
 export async function fetchUserProfileById(authorId) {
   try {
     const token = localStorage.getItem("token");

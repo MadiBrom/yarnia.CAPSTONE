@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchUserProfileById, fetchUserStoriesById } from "../API";
+import { fetchUserProfileById, fetchUserStoriesById, fetchUserFollowerCount } from "../API";
 
 export default function UserProfile() {
   const { authorId } = useParams();
   const [user, setUser] = useState(null);
   const [userStories, setUserStories] = useState([]);
+  const [followerCount, setFollowerCount] = useState(0); // State to hold follower count
   const [userError, setUserError] = useState(null);
   const [storiesError, setStoriesError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,6 +54,20 @@ export default function UserProfile() {
     }
   }, [authorId]);
 
+  // Fetch follower count
+  useEffect(() => {
+    const fetchFollowers = async () => {
+      try {
+        const { followerCount } = await fetchUserFollowerCount(authorId);
+        setFollowerCount(followerCount);
+      } catch (error) {
+        console.error("Failed to fetch followers:", error);
+      }
+    };
+
+    fetchFollowers();
+  }, [authorId]);
+
   if (loading) {
     return <div>Loading user data...</div>;
   }
@@ -63,22 +78,23 @@ export default function UserProfile() {
     <>
       <section id="whole-profile">
         <div className="profile">
-        <div className="user-profile-container">
-        {user.profilePic ? (
-  <img
-    src={user.profilePic}
-    alt="User's Profile Picture"
-    style={{ maxWidth: "100%", maxHeight: "300px" }}
-  />
-) : (
-  <p>No profile picture available.</p>
-)}
+          <div className="user-profile-container">
+            {user.profilePic ? (
+              <img
+                src={user.profilePic}
+                alt="User's Profile Picture"
+                style={{ maxWidth: "100%", maxHeight: "300px" }}
+              />
+            ) : (
+              <p>No profile picture available.</p>
+            )}
 
             {user ? (
               <>
                 <div className="profile-header">
                   <h1>{user.username}</h1>
                   <p>Bio: {user.bio}</p>
+                  <p>Followers: {followerCount}</p> {/* Display the follower count */}
                 </div>
 
                 {/* Stories Section */}
@@ -89,9 +105,9 @@ export default function UserProfile() {
                   ) : userStories.length > 0 ? (
                     <ul className="story-list">
                       {userStories.map((story) => (
-                        <div className="story-item" key={story.id}>
+                        <div className="story-item" key={story.storyId}>
                           <li>
-                            <div class="story-card">
+                            <div className="story-card">
                               <h3>{story.title}</h3>
                               <p>{story.summary || "No summary available"}</p>
                               <button

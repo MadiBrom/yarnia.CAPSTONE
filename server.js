@@ -785,3 +785,19 @@ app.get("/api/stories/:storyId/comments", async (req, res, next) => {
     res.status(500).json({ message: "Failed to fetch comments." });
   }
 });
+// In your backend, set up an API route to fetch the follower count
+app.get("/api/users/:userId/followers", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const followerCount = await prisma.follower.count({
+      where: { followingId: parseInt(userId) }, // Get follower count for the user
+    });
+
+    res.json({ followerCount }); // Return the follower count
+  } catch (error) {
+    console.error("Failed to fetch follower count:", error);
+    res.status(500).json({ error: "Failed to fetch follower count." });
+  }
+});
+
