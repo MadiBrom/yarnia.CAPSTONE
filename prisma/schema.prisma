@@ -18,11 +18,11 @@ model User {
   username String   @unique
   email    String   @unique
   password String
-  joinedOn DateTime @default(now())
   bio      String?
   isAdmin  Boolean  @default(false)
+  profilePic String?  // Add this line to include profilePic
+  joinedOn DateTime @default(now())
 
-  // Relations
   bookmarks Bookmark[]
   comments  Comment[]
   stories   Story[]    @relation("author")
@@ -36,12 +36,13 @@ model Story {
   genre     String
   createdAt DateTime @default(now())
   content   String
+  pictureUrl String?  // This should be included in the schema
 
-  // Relations
   author    User       @relation("author", fields: [authorId], references: [id])
   comments  Comment[]
   bookmarks Bookmark[]
 }
+
 
 model Bookmark {
   bookmarkId Int      @id @default(autoincrement())

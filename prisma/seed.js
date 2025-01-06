@@ -42,6 +42,7 @@ const seed = async () => {
         password: faker.internet.password(),
         bio: faker.lorem.sentence(),
         joinedOn: faker.date.past(),
+        profilePic: faker.image.avatar(),
       },
     });
 
@@ -50,6 +51,7 @@ const seed = async () => {
     // Create random number of stories for each user
     for (let j = 0; j < getRandomNumber(1, 20); j++) {
       const randomGenre = genres[getRandomNumber(0, genres.length - 1)]; // Pick a random genre
+      const pictureUrl = faker.image.urlPicsumPhotos();
 
       const story = await prisma.story.create({
         data: {
@@ -59,6 +61,7 @@ const seed = async () => {
           genre: randomGenre, // Assign a random genre to each story
           authorId: user.id, // The story's author
           createdAt: faker.date.past(),
+          pictureUrl,
         },
       });
 
