@@ -63,7 +63,17 @@ export default function UserProfile() {
     <>
       <section id="whole-profile">
         <div className="profile">
-          <div className="user-profile-container">
+        <div className="user-profile-container">
+        {user.profilePic ? (
+  <img
+    src={user.profilePic}
+    alt="User's Profile Picture"
+    style={{ maxWidth: "100%", maxHeight: "300px" }}
+  />
+) : (
+  <p>No profile picture available.</p>
+)}
+
             {user ? (
               <>
                 <div className="profile-header">

@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchAllStories, fetchSingleStory } from "../API";
 import catGif from "./images/Yarnia.gif";
-import React from "react";
 import "react-quill/dist/quill.snow.css";
 
 const Stories = () => {
@@ -13,6 +12,7 @@ const Stories = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  
 
   const navigate = useNavigate();
   const storiesPerPage = 10;
@@ -32,7 +32,6 @@ const Stories = () => {
     fetchStories();
   }, []);
 
-  // Handle full story modal opening
   const handleReadMore = async (storyId) => {
     try {
       const fullStory = await fetchSingleStory(storyId);
@@ -45,7 +44,6 @@ const Stories = () => {
 
   const closeModal = () => setShowModal(false);
 
-  // Filter and sort stories based on search query and selected genre (category)
   const filteredStories = stories
     .filter((story) => {
       const matchesSearchQuery =
@@ -82,7 +80,6 @@ const Stories = () => {
     "Comedy",
   ];
 
-  // Handle category selection for filtering stories by genre
   const handleCategorySelect = (genre) => {
     setSelectedCategory(genre);
     setCurrentPage(1);
@@ -101,7 +98,6 @@ const Stories = () => {
       <div id="search">
         <aside className="sidebar">
           <h2>Genres</h2>
-
           <ul className="sidebar-menu">
             <li
               onClick={() => handleCategorySelect("")}
@@ -120,7 +116,6 @@ const Stories = () => {
             ))}
           </ul>
           <div id="searchbar">
-            {/* Search Bar */}
             <input
               type="text"
               placeholder="Search by title or author"
@@ -154,6 +149,13 @@ const Stories = () => {
               <p>
                 <strong>Genre:</strong> {selectedStory.genre}
               </p>
+              {selectedStory.pictureUrl && (
+                <img
+                  src={selectedStory.pictureUrl}
+                  alt="Story Visual"
+                  style={{ maxWidth: "100%", maxHeight: "300px" }}
+                />
+              )}
               <p>
                 <strong>Excerpt:</strong>
               </p>
@@ -163,7 +165,6 @@ const Stories = () => {
                   __html: selectedStory.content.slice(0, 500),
                 }}
               ></div>
-
               <button
                 onClick={() => navigate(`/stories/${selectedStory.storyId}`)}
               >
@@ -172,138 +173,34 @@ const Stories = () => {
             </div>
           </div>
         )}
-        <div className="pagination">
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="pagination-button"
-              >
-                Previous
-              </button>
-
-              {Array.from({ length: totalPages }, (_, index) => {
-                const pageNumber = index + 1;
-
-                if (
-                  pageNumber === currentPage ||
-                  (pageNumber >= currentPage - 2 &&
-                    pageNumber <= currentPage + 2)
-                ) {
-                  return (
-                    <button
-                      key={pageNumber}
-                      onClick={() => handlePageChange(pageNumber)}
-                      className={`pagination-button ${
-                        currentPage === pageNumber ? "active" : ""
-                      }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                }
-
-                return null;
-              })}
-
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="pagination-button"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </div>
-        {currentStories.length > 0 ? (
-          currentStories.map((story) => (
-            <div key={story.storyId} className="story-card">
-              <div className="story-card-counts">
-                <span className="bookmark-count">
-                  {story._count?.bookmarks || 0}
-                </span>
-                <Link to={`/stories/${story.storyId}/comments`}>
-                  <span className="comment-count">
-                    {story._count?.comments || 0}
-                  </span>
+        {currentStories.map((story) => (
+          <div key={story.storyId} className="story-card">
+            <h2>{story.title}</h2>
+            <p>
+              <strong>Author:</strong>{" "}
+              {story.author?.username ? (
+                <Link to={`/users/${story.authorId}`}>
+                  {story.author.username}
                 </Link>
-              </div>
-              <h2>{story.title}</h2>
-              <p>
-                <strong>Author:</strong>{" "}
-                {story?.author?.username ? (
-                  <Link to={`/users/${story.authorId}`}>
-                    {story.author.username}
-                  </Link>
-                ) : (
-                  "Unknown Author"
-                )}
-              </p>
-              <p>
-                <strong>Published On:</strong>{" "}
-                {new Date(story.createdAt).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Genre:</strong> {story.genre}
-              </p>
-              <p>
-                <strong>Summary:</strong> {story.summary}
-              </p>
-              <button onClick={() => handleReadMore(story.storyId)}>
-                Read More
-              </button>
-            </div>
-          ))
-        ) : (
-          <p>No stories match your search.</p>
-        )}
-
-        <div className="pagination">
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="pagination-button"
-              >
-                Previous
-              </button>
-
-              {Array.from({ length: totalPages }, (_, index) => {
-                const pageNumber = index + 1;
-                if (
-                  pageNumber === currentPage ||
-                  (pageNumber >= currentPage - 2 &&
-                    pageNumber <= currentPage + 2)
-                ) {
-                  return (
-                    <button
-                      key={pageNumber}
-                      onClick={() => handlePageChange(pageNumber)}
-                      className={`pagination-button ${
-                        currentPage === pageNumber ? "active" : ""
-                      }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                }
-
-                return null;
-              })}
-
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="pagination-button"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </div>
+              ) : (
+                "Unknown Author"
+              )}
+            </p>
+            <p>
+              <strong>Published On:</strong>{" "}
+              {new Date(story.createdAt).toLocaleDateString()}
+            </p>
+            <p>
+              <strong>Genre:</strong> {story.genre}
+            </p>
+            <p>
+              <strong>Summary:</strong> {story.summary}
+            </p>
+            <button onClick={() => handleReadMore(story.storyId)}>
+              Read More
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
