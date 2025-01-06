@@ -83,27 +83,40 @@ const seed = async () => {
 const followerData = [];
 const maxRetries = 50;
 
-// Updated seed logic for followers
 for (let i = 0; i < users.length; i++) {
-  const followersCount = getRandomNumber(1, 10); // Random followers for each user
-  const followingUsers = new Set();
+    const followersCount = getRandomNumber(1, 10); // Random number of followers for this user
+    const followingUsers = new Set(); // Initialize for each user
 
-  for (let j = 0; j < followersCount; j++) {
-    let followingId;
-    do {
-      followingId = users[getRandomNumber(0, users.length - 1)].id;
-    } while (followingId === users[i].id || followingUsers.has(followingId));
+    for (let j = 0; j < followersCount; j++) {
+        let followingId;
+        let retries = 0;
 
-    followingUsers.add(followingId);
+        do {
+            followingId = users[getRandomNumber(0, users.length - 1)].id;
+            retries++;
+        } while (
+            (followingId === users[i].id || followingUsers.has(followingId)) &&
+            retries < maxRetries
+        );
 
-    await prisma.follower.create({
-      data: {
-        userId: users[i].id,
-        followingId,
-      },
-    });
-  }
+        if (retries >= maxRetries) {
+            console.warn(`Could not find a valid following for user ${users[i].id}`);
+            continue;
+        }
+
+        followingUsers.add(followingId);
+        followerData.push({
+            userId: users[i].id,
+            followingId,
+        });
+    }
 }
+
+// Batch create followers
+await prisma.follower.createMany({
+    data: followerData,
+    skipDuplicates: true, // Skip duplicates if unique constraints are set
+});
 
       // Create random bookmarks for each story
       for (let k = 0; k < getRandomNumber(0, 1000); k++) {
