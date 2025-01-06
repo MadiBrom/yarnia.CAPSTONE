@@ -117,6 +117,13 @@ await prisma.follower.createMany({
     data: followerData,
     skipDuplicates: true, // Skip duplicates if unique constraints are set
 });
+// Fetch user data including followers count
+for (let user of users) {
+  const followersCount = await prisma.follower.count({
+    where: { userId: user.id },
+  });
+  console.log(`User ${user.id} has ${followersCount} followers.`);
+}
 
       // Create random bookmarks for each story
       for (let k = 0; k < getRandomNumber(0, 1000); k++) {

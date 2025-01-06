@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchUserProfileById, fetchUserStoriesById, fetchUserFollowerCount } from "../API";
+import { fetchUserProfileById, fetchUserStoriesById, fetchUserFollowersCount, fetchUserFollowingCount, followUser } from "../API";
 
 export default function UserProfile() {
   const { authorId } = useParams();
   const [user, setUser] = useState(null);
   const [userStories, setUserStories] = useState([]);
-  const [followerCount, setFollowerCount] = useState(0); // State to hold follower count
   const [userError, setUserError] = useState(null);
   const [storiesError, setStoriesError] = useState(null);
+  const [followersCount, setFollowersCount] = useState(0); // Initialize followers count
+  const [followingCount, setFollowingCount] = useState(0); // Initialize following count
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -54,19 +55,49 @@ export default function UserProfile() {
     }
   }, [authorId]);
 
-  // Fetch follower count
+  // Fetch followers count
   useEffect(() => {
-    const fetchFollowers = async () => {
+    const fetchFollowersCount = async () => {
       try {
-        const { followerCount } = await fetchUserFollowerCount(authorId);
-        setFollowerCount(followerCount);
+        const count = await fetchUserFollowersCount(authorId);
+        setFollowersCount(count);
       } catch (error) {
-        console.error("Failed to fetch followers:", error);
+        console.error("Failed to fetch followers count:", error);
       }
     };
 
-    fetchFollowers();
+    if (authorId) {
+      fetchFollowersCount();
+    }
   }, [authorId]);
+
+  // Fetch following count
+  useEffect(() => {
+    const fetchFollowingCount = async () => {
+      try {
+        const count = await fetchUserFollowingCount(authorId);
+        setFollowingCount(count);
+      } catch (error) {
+        console.error("Failed to fetch following count:", error);
+      }
+    };
+
+    if (authorId) {
+      fetchFollowingCount();
+    }
+  }, [authorId]);
+
+  // Handle Follow button click
+  const handleFollow = async () => {
+    try {
+      // Call API to follow the user
+      await followUser(authorId);
+      setFollowersCount(followersCount + 1); // Increment followers count
+      setFollowingCount(followingCount + 1); // Increment following count
+    } catch (error) {
+      console.error("Failed to follow user:", error);
+    }
+  };
 
   if (loading) {
     return <div>Loading user data...</div>;
@@ -94,7 +125,11 @@ export default function UserProfile() {
                 <div className="profile-header">
                   <h1>{user.username}</h1>
                   <p>Bio: {user.bio}</p>
-                  <p>Followers: {followerCount}</p> {/* Display the follower count */}
+                  <p>Followers: {followersCount}</p> {/* Display followers count */}
+                  <p>Following: {followingCount}</p> {/* Display following count */}
+                  <button onClick={handleFollow} className="button">
+                    Follow Me
+                  </button>
                 </div>
 
                 {/* Stories Section */}
@@ -105,9 +140,9 @@ export default function UserProfile() {
                   ) : userStories.length > 0 ? (
                     <ul className="story-list">
                       {userStories.map((story) => (
-                        <div className="story-item" key={story.storyId}>
+                        <div className="story-item" key={story.id}>
                           <li>
-                            <div className="story-card">
+                            <div class="story-card">
                               <h3>{story.title}</h3>
                               <p>{story.summary || "No summary available"}</p>
                               <button

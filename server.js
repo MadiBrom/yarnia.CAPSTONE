@@ -785,19 +785,76 @@ app.get("/api/stories/:storyId/comments", async (req, res, next) => {
     res.status(500).json({ message: "Failed to fetch comments." });
   }
 });
-// In your backend, set up an API route to fetch the follower count
-app.get("/api/users/:userId/followers", async (req, res) => {
-  const { userId } = req.params;
+
+app.get('/api/users/:id/followers-count', async (req, res) => {
+  const { id } = req.params;
 
   try {
-    const followerCount = await prisma.follower.count({
-      where: { followingId: parseInt(userId) }, // Get follower count for the user
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id, 10) },
+      select: {
+        followers: {
+          select: { id: true },
+        },
+      },
     });
 
-    res.json({ followerCount }); // Return the follower count
+    if (user) {
+      res.json({ count: user.followers.length }); // Correct followers count
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
   } catch (error) {
-    console.error("Failed to fetch follower count:", error);
-    res.status(500).json({ error: "Failed to fetch follower count." });
+    console.error("Error fetching followers count:", error);
+    res.status(500).json({ error: 'Failed to fetch followers count' });
   }
 });
 
+// Express route: /api/users/:id/following-count
+app.get('/api/users/:id/following-count', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const count = await prisma.follower.count({
+      where: { userId: parseInt(id, 10) },
+    });
+    res.json({ count }); // Return following count
+  } catch (error) {
+    console.error("Error fetching following count:", error);
+    res.status(500).json({ error: 'Failed to fetch following count' });
+  }
+});
+
+// Express route: /api/users/:id/follow
+// /api/users/[userId]/follow
+app.post('/api/users/:userId/follow', async (req, res) => {
+  const { userId } = req.params;
+  const { followingId } = req.body; // The user you want to follow
+  
+  try {
+    // Check if the relationship already exists
+    const existingFollow = await prisma.follower.findFirst({
+      where: {
+        userId: parseInt(userId),
+        followingId: followingId, // The ID of the user being followed
+      },
+    });
+    
+    if (existingFollow) {
+      return res.status(400).json({ message: 'Already following this user' });
+    }
+    
+    // Create a new follower relationship
+    await prisma.follower.create({
+      data: {
+        userId: parseInt(userId),
+        followingId,
+      },
+    });
+    
+    return res.status(200).json({ message: 'User followed successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Failed to follow user' });
+  }
+});

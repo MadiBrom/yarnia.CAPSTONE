@@ -422,13 +422,50 @@ export const updateUserProfile = async (username, bio) => {
 };
 
 
-export const fetchUserFollowerCount = async (userId) => {
-  const response = await fetch(`/api/users/${userId}/followers`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch follower count: ${response.statusText}`);
+export const fetchUserFollowersCount = async (authorId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${authorId}/followers-count`);
+    const data = await response.json();
+    return data.count; // Assuming the API returns { count: number }
+  } catch (error) {
+    console.error("Failed to fetch followers count:", error);
+    throw error;
   }
-  return response.json(); // Returns { followerCount: <number> }
 };
+
+
+export async function fetchUserFollowingCount(userId) {
+  const response = await fetch(`/api/users/${userId}/following-count`);
+  const data = await response.json();
+  return data.count;
+}
+
+
+export async function followUser(followingId) {
+  try {
+    const response = await fetch(`${API_URL}/users/${authorId}/follow`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ followingId }),
+    });
+    
+    if (response.ok) {
+      // Successfully followed the user
+      setFollowingCount(prev => prev + 1);
+      alert('User followed successfully');
+    } else {
+      const result = await response.json();
+      alert(result.message || 'Failed to follow user');
+    }
+  } catch (error) {
+    console.error('Error following user:', error);
+    alert('Failed to follow user');
+  }
+};
+
+
 
 export async function fetchUserProfileById(authorId) {
   try {
@@ -474,7 +511,7 @@ export async function fetchUserStoriesById(userId) {
 export const fetchFollowers = async (userId) => {
   try {
     // Replace this URL with your actual API endpoint
-    const response = await fetch(`/api/followers/${userId}`);
+    const response = await fetch(`${API_URL}/followers/${userId}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch followers');
