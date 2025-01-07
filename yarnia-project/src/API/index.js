@@ -433,14 +433,6 @@ export const fetchUserFollowersCount = async (authorId) => {
   }
 };
 
-
-export async function fetchUserFollowingCount(userId) {
-  const response = await fetch(`/api/users/${userId}/following-count`);
-  const data = await response.json();
-  return data.count;
-}
-
-
 export async function followUser(followingId) {
   try {
     const response = await fetch(`${API_URL}/users/${authorId}/follow`, {
@@ -465,6 +457,26 @@ export async function followUser(followingId) {
   }
 };
 
+import axios from 'axios';
+
+// Fetch user following count
+export const fetchUserFollowingCount = async (id) => {
+  const response = await axios.get(`${API_URL}/users/${id}/following/count`);
+  return response.data;
+};
+
+
+// Unfollow user
+export const unfollowUser = async (id) => {
+  const response = await axios.delete(`${API_URL}/users/${id}/unfollow`);
+  return response.data;
+};
+
+// Check if a user is following another user
+export const isUserFollowing = async (currentUserId, targetUserId) => {
+  const response = await axios.get(`${API_URL}/users/${targetUserId}/is-following/${currentUserId}`);
+  return response.data.isFollowing;
+};
 
 
 export async function fetchUserProfileById(authorId) {
@@ -524,5 +536,69 @@ export const fetchFollowers = async (userId) => {
   } catch (error) {
     console.error('Error fetching followers:', error);
     throw error; // Optionally, re-throw the error to be handled by the caller
+  }
+};
+
+const fetchUserData = async () => {
+  try {
+    const response = await fetchWithAuth("http://localhost:3000/api/auth/me");
+
+    if (response.ok) {
+      const userData = await response.json();
+      setUser(userData);
+      setUsername(userData.username);
+      setBio(userData.bio);
+      setIsAuthenticated(true);
+
+      // Fetch the user's stories, bookmarks, comments, followers, and following
+      await fetchUserStories(userData.id);
+      await fetchUserBookmarks(userData.id);
+      await fetchUserComments(userData.id);
+      await fetchUserFollowers(userData.id);  // Add this line
+      await fetchUserFollowing(userData.id);  // Add this line
+
+    } else {
+      console.error("Failed to fetch user data");
+      setIsAuthenticated(false);
+      navigate("/login");
+    }
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    setIsAuthenticated(false);
+    navigate("/login");
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Fetch user followers
+const fetchUserFollowers = async (userId) => {
+  try {
+    const response = await fetchWithAuth(
+      `http://localhost:3000/api/users/${userId}/followers`
+    );
+    if (response.ok) {
+      const userFollowers = await response.json();
+      setFollowers(userFollowers); // Set followers in state
+    }
+  } catch (error) {
+    console.error("Error fetching user followers:", error);
+    setError("An error occurred while fetching followers.");
+  }
+};
+
+// Fetch user following
+const fetchUserFollowing = async (userId) => {
+  try {
+    const response = await fetchWithAuth(
+      `http://localhost:3000/api/users/${userId}/following`
+    );
+    if (response.ok) {
+      const userFollowing = await response.json();
+      setFollowing(userFollowing); // Set following in state
+    }
+  } catch (error) {
+    console.error("Error fetching user following:", error);
+    setError("An error occurred while fetching following.");
   }
 };

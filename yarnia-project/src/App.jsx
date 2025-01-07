@@ -77,7 +77,7 @@ function App() {
         <Route path="/users" element={<AdminUsers />} />
         <Route path="/users/:authorId" element={<UserProfile />} />
         <Route path="/followers" element={<FollowersSection />} />
-        <Route path="/following" element={<FollowingSection />} />
+        <Route path="/following" element={<FollowingSection/>} />
       </Routes>
     </div>
   );

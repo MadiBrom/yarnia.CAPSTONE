@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchUserProfileById, fetchUserStoriesById, fetchUserFollowersCount, fetchUserFollowingCount, followUser } from "../API";
+import { fetchUserProfileById, fetchUserStoriesById, fetchUserFollowersCount, fetchUserFollowingCount, followUser, unfollowUser, isUserFollowing } from "../API";
 
 export default function UserProfile() {
   const { authorId } = useParams();
@@ -11,7 +11,9 @@ export default function UserProfile() {
   const [followersCount, setFollowersCount] = useState(0); // Initialize followers count
   const [followingCount, setFollowingCount] = useState(0); // Initialize following count
   const [loading, setLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false); // Track follow status
   const navigate = useNavigate();
+  const loggedInUserId = 123; // Replace with actual logic to get logged-in user's ID
 
   // Fetch user data
   useEffect(() => {
@@ -87,17 +89,37 @@ export default function UserProfile() {
     }
   }, [authorId]);
 
-  // Handle Follow button click
+  // Check if the logged-in user is already following
+  useEffect(() => {
+    const checkFollowingStatus = async () => {
+      try {
+        const status = await isUserFollowing(loggedInUserId, authorId);
+        setIsFollowing(status); // Set follow status
+      } catch (error) {
+        console.error("Failed to check follow status:", error);
+      }
+    };
+
+    if (loggedInUserId) {
+      checkFollowingStatus();
+    }
+  }, [loggedInUserId, authorId]);
+
   const handleFollow = async () => {
     try {
-      // Call API to follow the user
-      await followUser(authorId);
-      setFollowersCount(followersCount + 1); // Increment followers count
-      setFollowingCount(followingCount + 1); // Increment following count
+      if (isFollowing) {
+        await unfollowUser(authorId); // Use authorId
+      } else {
+        await followUser(authorId); // Use authorId
+      }
+      // Update follow state
+      setIsFollowing(!isFollowing);
+      setFollowersCount((prev) => (isFollowing ? prev - 1 : prev + 1));
     } catch (error) {
-      console.error("Failed to follow user:", error);
+      console.error("Error following/unfollowing user:", error);
     }
   };
+  
 
   if (loading) {
     return <div>Loading user data...</div>;
@@ -128,7 +150,7 @@ export default function UserProfile() {
                   <p>Followers: {followersCount}</p> {/* Display followers count */}
                   <p>Following: {followingCount}</p> {/* Display following count */}
                   <button onClick={handleFollow} className="button">
-                    Follow Me
+                    {isFollowing ? "Unfollow" : "Follow Me"}
                   </button>
                 </div>
 
@@ -139,24 +161,22 @@ export default function UserProfile() {
                     <p>{storiesError}</p>
                   ) : userStories.length > 0 ? (
                     <ul className="story-list">
-                      {userStories.map((story) => (
-                        <div className="story-item" key={story.id}>
-                          <li>
-                            <div class="story-card">
-                              <h3>{story.title}</h3>
-                              <p>{story.summary || "No summary available"}</p>
-                              <button
-                                onClick={() =>
-                                  navigate(`/stories/${story.storyId}`)
-                                }
-                                className="button"
-                              >
-                                Read more
-                              </button>
-                            </div>
-                          </li>
-                        </div>
-                      ))}
+{userStories.map((story) => (
+  <div className="story-item" key={story.id}>
+    <li>
+      <div className="story-card">
+        <h3>{story.title}</h3>
+        <p>{story.summary || "No summary available"}</p>
+        <button
+          onClick={() => navigate(`/stories/${story.storyId}`)}
+          className="button"
+        >
+          Read more
+        </button>
+      </div>
+    </li>
+  </div>
+))}
                     </ul>
                   ) : (
                     <p>No stories available.</p>

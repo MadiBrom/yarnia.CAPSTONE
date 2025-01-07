@@ -4,6 +4,10 @@ import { fetchBookmarkedStories } from "../API";
 import { fetchWithAuth } from "../API";
 
 const Profile = ({ user, setUser }) => {
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [loadingFollowers, setLoadingFollowers] = useState(false);
+  const [loadingFollowing, setLoadingFollowing] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState("");
@@ -232,6 +236,45 @@ const handleClickers = () => {
     }
   };
 
+  const fetchFollowers = async () => {
+    setLoadingFollowers(true);
+    try {
+      const response = await fetchWithAuth(
+        `http://localhost:3000/api/users/${user.id}/followers`
+      );
+      if (response.ok) {
+        const followersData = await response.json();
+        setFollowers(followersData);
+      } else {
+        console.error("Failed to fetch followers");
+      }
+    } catch (error) {
+      console.error("Error fetching followers:", error);
+    } finally {
+      setLoadingFollowers(false);
+    }
+  };
+  
+  const fetchFollowing = async () => {
+    setLoadingFollowing(true);
+    try {
+      const response = await fetchWithAuth(
+        `http://localhost:3000/api/users/${user.id}/following`
+      );
+      if (response.ok) {
+        const followingData = await response.json();
+        setFollowing(followingData);
+      } else {
+        console.error("Failed to fetch following");
+      }
+    } catch (error) {
+      console.error("Error fetching following:", error);
+    } finally {
+      setLoadingFollowing(false);
+    }
+  };
+  
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     const imgname = event.target.files[0].name;
@@ -395,9 +438,9 @@ const handleClickers = () => {
                 !
               </h1>
               <div className="info">
-                <h4 id="label"> Email:</h4>
+                <h4 id="label">Email:</h4>
                 <p>{user.email}</p>
-
+  
                 <h4 id="label">Bio:</h4>
                 <p>
                   {isEditing ? (
@@ -432,10 +475,39 @@ const handleClickers = () => {
                 </button>
               )}
               {saveError && <p className="error-message">{saveError}</p>}
-              <button onClick={handleClicker}>See Followers</button>
-              <button onClick={handleClickers}>See Following</button>
+  
+              <button onClick={handleClicker}>
+                {loadingFollowers ? "Loading followers..." : "See Followers"}
+              </button>
+              <button onClick={handleClickers}>
+                {loadingFollowing ? "Loading following..." : "See Following"}
+              </button>
             </div>
-
+  
+            {/* Followers Section */}
+            {followers.length > 0 && (
+              <div>
+                <h3>Followers:</h3>
+                <ul>
+                  {followers.map((follower) => (
+                    <li key={follower.id}>{follower.username}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+  
+            {/* Following Section */}
+            {following.length > 0 && (
+              <div>
+                <h3>Following:</h3>
+                <ul>
+                  {following.map((followee) => (
+                    <li key={followee.id}>{followee.username}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+  
             {/* Comment History Section */}
             <div className="profile-container">
               <h3 id="history">Comment History:</h3>
@@ -455,9 +527,7 @@ const handleClickers = () => {
                             View Story
                           </button>
                           <button
-                            onClick={() =>
-                              handleCommentDelete(comment.commentId)
-                            }
+                            onClick={() => handleCommentDelete(comment.commentId)}
                             className="button"
                           >
                             Delete
@@ -470,7 +540,9 @@ const handleClickers = () => {
                   <div className="pagination-controls">
                     <button
                       onClick={() =>
-                        setCurrentCommentsPage((prev) => Math.max(prev - 1, 1))
+                        setCurrentCommentsPage((prev) =>
+                          Math.max(prev - 1, 1)
+                        )
                       }
                       disabled={currentCommentsPage === 1}
                     >
@@ -502,7 +574,7 @@ const handleClickers = () => {
                 <p>No comments found</p>
               )}
             </div>
-
+  
             {/* Bookmarks Section */}
             <div className="profile-container">
               <h2>Your Bookmarks</h2>
@@ -564,7 +636,7 @@ const handleClickers = () => {
           <div className="bottom-container">
             <h2>Your Stories</h2>
             {error && <p className="error-message">{error}</p>}
-
+  
             {stories.length > 0 ? (
               <>
                 <ul className="story-list">
@@ -597,7 +669,9 @@ const handleClickers = () => {
                 <div className="pagination-controls">
                   <button
                     onClick={() =>
-                      setCurrentStoriesPage((prev) => Math.max(prev - 1, 1))
+                      setCurrentStoriesPage((prev) =>
+                        Math.max(prev - 1, 1)
+                      )
                     }
                     disabled={currentStoriesPage === 1}
                   >
@@ -617,8 +691,7 @@ const handleClickers = () => {
                       )
                     }
                     disabled={
-                      currentStoriesPage ===
-                      Math.ceil(stories.length / storiesPerPage)
+                      currentStoriesPage === Math.ceil(stories.length / storiesPerPage)
                     }
                   >
                     Next
@@ -640,7 +713,7 @@ const handleClickers = () => {
         </button>
       </div>
     </>
-  );
+  );  
 };
 
 export default Profile;
