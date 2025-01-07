@@ -827,7 +827,7 @@ app.get('/api/users/:id/following-count', async (req, res) => {
 
 // Express route: /api/users/:id/follow
 // /api/users/[userId]/follow
-app.post('/api/users/:userId/follow', async (req, res) => {
+app.post(`api/users/:userId/follow`, async (req, res) => {
   const { userId } = req.params;
   const { followingId } = req.body; // The user you want to follow
   
