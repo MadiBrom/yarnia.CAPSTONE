@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchUserProfileById, fetchUserStoriesById, fetchUserFollowersCount, fetchUserFollowingCount, followUser, unfollowUser, isUserFollowing } from "../API";
+import {
+  fetchUserProfileById,
+  fetchUserStoriesById,
+  fetchUserFollowersCount,
+  fetchUserFollowingCount,
+  followUser,
+  unfollowUser,
+  isUserFollowing,
+} from "../API";
 
 export default function UserProfile() {
   const { authorId } = useParams();
@@ -107,16 +115,26 @@ export default function UserProfile() {
 
   const handleFollow = async () => {
     try {
+      // Show loading spinner or disabled state on button
+      setLoading(true);
+  
       if (isFollowing) {
         await unfollowUser(authorId); // Use authorId
       } else {
         await followUser(authorId); // Use authorId
       }
-      // Update follow state
+  
+      // Update state after API call
       setIsFollowing(!isFollowing);
       setFollowersCount((prev) => (isFollowing ? prev - 1 : prev + 1));
+  
+      // Hide loading spinner or re-enable button
+      setLoading(false);
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
+      // Show error alert or message
+      alert("Something went wrong while updating the follow status. Please try again.");
+      setLoading(false);
     }
   };
   
@@ -161,22 +179,22 @@ export default function UserProfile() {
                     <p>{storiesError}</p>
                   ) : userStories.length > 0 ? (
                     <ul className="story-list">
-{userStories.map((story) => (
-  <div className="story-item" key={story.id}>
-    <li>
-      <div className="story-card">
-        <h3>{story.title}</h3>
-        <p>{story.summary || "No summary available"}</p>
-        <button
-          onClick={() => navigate(`/stories/${story.storyId}`)}
-          className="button"
-        >
-          Read more
-        </button>
-      </div>
-    </li>
-  </div>
-))}
+                      {userStories.map((story) => (
+                        <div className="story-item" key={story.id}>
+                          <li>
+                            <div className="story-card">
+                              <h3>{story.title}</h3>
+                              <p>{story.summary || "No summary available"}</p>
+                              <button
+                                onClick={() => navigate(`/stories/${story.storyId}`)}
+                                className="button"
+                              >
+                                Read more
+                              </button>
+                            </div>
+                          </li>
+                        </div>
+                      ))}
                     </ul>
                   ) : (
                     <p>No stories available.</p>

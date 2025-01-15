@@ -575,7 +575,7 @@ const fetchUserData = async () => {
 const fetchUserFollowers = async (userId) => {
   try {
     const response = await fetchWithAuth(
-      `http://localhost:3000/api/users/${userId}/followers`
+      `http://localhost:3000/api/users/${followerId}/followers`
     );
     if (response.ok) {
       const userFollowers = await response.json();
@@ -591,7 +591,7 @@ const fetchUserFollowers = async (userId) => {
 const fetchUserFollowing = async (userId) => {
   try {
     const response = await fetchWithAuth(
-      `http://localhost:3000/api/users/${userId}/following`
+      `http://localhost:3000/api/users/${followingId}/following`
     );
     if (response.ok) {
       const userFollowing = await response.json();
@@ -600,5 +600,26 @@ const fetchUserFollowing = async (userId) => {
   } catch (error) {
     console.error("Error fetching user following:", error);
     setError("An error occurred while fetching following.");
+  }
+};
+
+// toggle follow user
+export const toggleFollow = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/follow`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to toggle follow user");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error toggling follow user:", error);
+    throw error;
   }
 };
