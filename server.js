@@ -786,75 +786,87 @@ app.get("/api/stories/:storyId/comments", async (req, res, next) => {
   }
 });
 
-app.get('/api/users/:id/followers-count', async (req, res) => {
-  const { id } = req.params;
+// Follow a User: This will allow one user to follow another.
+app.post("/api/users/:userId/follow", authenticateUser, async (req, res) => {
+  const { userId } = req.params;
+
+  if (parseInt(userId) === req.user.id) {
+    return res.status(400).json({ message: "You cannot follow yourself." });
+  }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: parseInt(id, 10) },
-      select: {
-        followers: {
-          select: { id: true },
+    // Check if the user is already following
+    const existingFollow = await prisma.user.update({
+      where: { id: req.user.id },
+      data: {
+        following: {
+          connect: { id: parseInt(userId) },
         },
       },
     });
 
-    if (user) {
-      res.json({ count: user.followers.length }); // Correct followers count
-    } else {
-      res.status(404).json({ error: 'User not found' });
-    }
-  } catch (error) {
-    console.error("Error fetching followers count:", error);
-    res.status(500).json({ error: 'Failed to fetch followers count' });
+    res.status(200).json({ message: "Followed successfully." });
+  } catch (err) {
+    console.error("Error following user:", err);
+    res.status(500).json({ message: "Error following user." });
   }
 });
 
-// Express route: /api/users/:id/following-count
-app.get('/api/users/:id/following-count', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const count = await prisma.follower.count({
-      where: { userId: parseInt(id, 10) },
-    });
-    res.json({ count }); // Return following count
-  } catch (error) {
-    console.error("Error fetching following count:", error);
-    res.status(500).json({ error: 'Failed to fetch following count' });
-  }
-});
-
-// Express route: /api/users/:id/follow
-// /api/users/[userId]/follow
-app.post(`api/users/:userId/follow`, async (req, res) => {
+// Unfollow a User: This will allow a user to unfollow someone they are currently following.
+app.delete("/api/users/:userId/unfollow", authenticateUser, async (req, res) => {
   const { userId } = req.params;
-  const { followingId } = req.body; // The user you want to follow
-  
+
+  if (parseInt(userId) === req.user.id) {
+    return res.status(400).json({ message: "You cannot unfollow yourself." });
+  }
+
   try {
-    // Check if the relationship already exists
-    const existingFollow = await prisma.follower.findFirst({
-      where: {
-        userId: parseInt(userId),
-        followingId: followingId, // The ID of the user being followed
-      },
-    });
-    
-    if (existingFollow) {
-      return res.status(400).json({ message: 'Already following this user' });
-    }
-    
-    // Create a new follower relationship
-    await prisma.follower.create({
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
       data: {
-        userId: parseInt(userId),
-        followingId,
+        following: {
+          disconnect: { id: parseInt(userId) },
+        },
       },
     });
-    
-    return res.status(200).json({ message: 'User followed successfully' });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Failed to follow user' });
+
+    res.status(200).json({ message: "Unfollowed successfully." });
+  } catch (err) {
+    console.error("Error unfollowing user:", err);
+    res.status(500).json({ message: "Error unfollowing user." });
+  }
+});
+
+// Get Followers: This endpoint returns all users who are following a specific user.
+app.get("/api/users/:userId/followers", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const followers = await prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+      include: { followedBy: true },
+    });
+
+    res.status(200).json(followers?.followedBy || []);
+  } catch (err) {
+    console.error("Error fetching followers:", err);
+    res.status(500).json({ message: "Error fetching followers." });
+  }
+});
+
+// Get Following: This endpoint returns all users that a specific user is following.
+app.get("/api/users/:userId/following", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const following = await prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+      include: { following: true },
+    });
+
+    res.status(200).json(following?.following || []);
+  } catch (err) {
+    console.error("Error fetching following:", err);
+    res.status(500).json({ message: "Error fetching following." });
   }
 });
