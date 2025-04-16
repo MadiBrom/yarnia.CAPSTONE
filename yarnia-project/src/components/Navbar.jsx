@@ -1,5 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Dark from "./images/dark-mode.png";
+import Light from "./images/light-mode.png";
+import Yarnia from "./images/yarniaLogo.png";
 
 const NavBar = ({ user, setUser, darkMode, setDarkMode }) => {
   const navigate = useNavigate();
@@ -39,92 +42,105 @@ const NavBar = ({ user, setUser, darkMode, setDarkMode }) => {
 
   return (
     <nav
-      className={`transition-colors duration-300 px-6 py-4 shadow-md border-b 
-        ${darkMode ? "bg-worn_oak text-birch_parchment border-dark_olive" : "bg-library_leather text-ink_brown border-worn_page"}`}
+      className={`relative transition-colors duration-300 px-6 py-4 shadow-md border-b 
+        ${darkMode ? "bg-nav-dark text-primary-dark border-border-dark" : "bg-nav text-primary border-border"}`}
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Left side */}
+        {/* Left Section */}
         <div className="flex items-center space-x-4">
           <button
             onClick={handleDarkModeToggle}
-            className="text-xl hover:text-bright_moss transition"
+            className="w-8 h-8 hover:scale-105 transition-transform"
             aria-label="Toggle dark mode"
           >
-            {darkMode ? "☀️" : "🌙"}
+            <img
+              src={darkMode ? Light : Dark}
+              alt="Mode icon"
+              className="w-full h-full"
+            />
           </button>
-          <Link to="/" className="text-lg font-semibold hover:text-bright_moss">
-            Home
-          </Link>
-          {user && (
-            <Link to="/bookmarks" className="hidden sm:inline-block text-base hover:text-bright_moss">
-              Bookmarks
-            </Link>
-          )}
+          <Link to="/" className="text-lg font-semibold hover:text-accent">Home</Link>
         </div>
 
-        {/* Mobile menu toggle */}
-        <button
-          className="sm:hidden text-2xl"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-        >
-          ☰
-        </button>
+        {/* Center Logo */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <Link to="/">
+            <img
+              src={Yarnia}
+              alt="Yarnia Logo"
+              className="w-36 h-auto object-contain"
+            />
+          </Link>
+        </div>
 
-        {/* Right side menu */}
-        <ul className={`flex-col sm:flex-row sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-5 text-sm ${menuOpen ? "flex absolute top-16 right-6 bg-library_leather dark:bg-worn_oak p-4 rounded shadow-md z-50" : "hidden sm:flex"}`}>
+        {/* Right Section - Hamburger & Links */}
+        <div className="sm:hidden">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+            className="text-xl"
+          >
+            ☰
+          </button>
+        </div>
+
+        <div className="hidden sm:flex items-center space-x-4 text-sm">
           {user ? (
             <>
-              <li>
-                <Link to="/add-story" className="hover:text-bright_moss">
-                  Add Story
-                </Link>
-              </li>
-              <li>
-                <Link to="/profile" className="hover:text-bright_moss">
-                  Profile
-                </Link>
-              </li>
+              <Link to="/profile" className="hover:text-accent">Profile</Link>
               {user.isAdmin && (
                 <>
-                  <li>
-                    <Link to="/comments" className="hover:text-bright_moss">
-                      All Comments
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/users" className="hover:text-bright_moss">
-                      All Users
-                    </Link>
-                  </li>
+                  <Link to="/comments" className="hover:text-accent">All Comments</Link>
+                  <Link to="/users" className="hover:text-accent">All Users</Link>
                 </>
               )}
-              <li>
-                <Link
-                  to="/logout"
-                  onClick={handleLogout}
-                  className="hover:underline text-dusty_fern"
-                >
-                  Logout
-                </Link>
-              </li>
+              <Link
+                to="/logout"
+                onClick={handleLogout}
+                className="hover:underline text-badge dark:text-badge-dark"
+              >
+                Logout
+              </Link>
             </>
           ) : (
             <>
-              <li>
-                <Link to="/login" className="hover:text-bright_moss">
-                  Login
-                </Link>
-              </li>
-              <li>
-                <Link to="/register" className="hover:text-bright_moss">
-                  Register
-                </Link>
-              </li>
+              <Link to="/login" className="hover:text-accent">Login</Link>
+              <Link to="/register" className="hover:text-accent">Register</Link>
             </>
           )}
-        </ul>
+        </div>
       </div>
+
+      {/* Mobile Dropdown Menu */}
+      {menuOpen && (
+  <div className="absolute top-14 right-6 bg-input dark:bg-input-dark p-4 shadow-lg rounded-lg z-50 w-48 space-y-2 text-sm sm:hidden">
+    {user ? (
+      <>
+        <Link to="/profile" className="block hover:text-accent" onClick={() => setMenuOpen(false)}>Profile</Link>
+        {user.isAdmin && (
+          <>
+            <Link to="/comments" className="block hover:text-accent" onClick={() => setMenuOpen(false)}>All Comments</Link>
+            <Link to="/users" className="block hover:text-accent" onClick={() => setMenuOpen(false)}>All Users</Link>
+          </>
+        )}
+        <button
+          onClick={(e) => {
+            handleLogout(e);
+            setMenuOpen(false);
+          }}
+          className="block w-full text-left hover:underline text-badge dark:text-badge-dark"
+        >
+          Logout
+        </button>
+      </>
+    ) : (
+      <>
+        <Link to="/login" className="block hover:text-accent" onClick={() => setMenuOpen(false)}>Login</Link>
+        <Link to="/register" className="block hover:text-accent" onClick={() => setMenuOpen(false)}>Register</Link>
+      </>
+    )}
+  </div>
+)}
     </nav>
   );
 };

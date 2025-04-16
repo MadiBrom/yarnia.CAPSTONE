@@ -29,25 +29,29 @@ const StoryDetails = () => {
   }, [storyId]);
 
   if (error) {
-    return <p>{error}</p>;
+    return <p className="text-red-500 text-center py-4">{error}</p>;
   }
 
   if (!story) {
-    return <p>Loading...</p>;
+    return <p className="text-center text-secondary dark:text-secondary-dark py-4">Loading...</p>;
   }
 
   return (
-    <div className="story-details-container">
-      <h1 className="story-title">{story.title}</h1>
-      {story.summary && (
-        <p className="story-summary">
-          <strong>Summary:</strong> {story.summary}
-        </p>
-      )}
-      <div
-        className="story-content"
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(story.content) }} 
-      ></div>
+    <div className="bg-surface dark:bg-surface-dark min-h-screen px-4 sm:px-6 lg:px-8 py-8 text-primary dark:text-primary-dark">
+      <div className="max-w-4xl mx-auto bg-card dark:bg-card-dark p-6 rounded-lg shadow-md border border-border dark:border-border-dark">
+        <h1 className="text-3xl font-bold mb-4 border-b-2 border-border dark:border-border-dark pb-2">
+          {story.title}
+        </h1>
+        {story.summary && (
+          <p className="mb-4 text-secondary dark:text-secondary-dark">
+            <strong>Summary:</strong> {story.summary}
+          </p>
+        )}
+        <div
+          className="prose max-w-none text-primary dark:text-primary-dark"
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(story.content) }}
+        ></div>
+      </div>
     </div>
   );
 };

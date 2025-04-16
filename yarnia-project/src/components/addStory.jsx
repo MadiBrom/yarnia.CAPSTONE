@@ -1,19 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchWithAuth } from "../API";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import RichTextEditor from "./RichText";
 
-const AddStory = () => {
+const AddStory = ({ onStoryAdded }) => {
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
   const [genre, setGenre] = useState("");
   const [error, setError] = useState(null);
-  const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
 
-  // Predefined genres for the dropdown
   const genres = [
     "Fantasy",
     "Science Fiction",
@@ -26,126 +22,119 @@ const AddStory = () => {
   ];
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent form refresh
-
+    e.preventDefault();
     try {
-      // Send POST request directly within handleSubmit
       const response = await fetch("http://localhost:3000/api/stories", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // If using tokens
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          title,
-          summary,
-          content,
-          genre,
-        }),
+        body: JSON.stringify({ title, summary, content, genre }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to add story");
-      }
+      if (!response.ok) throw new Error("Failed to add story");
+      const newStory = await response.json();
 
-      const result = await response.json();
-
-      // Story added successfully, navigate to home page
-      navigate(`/stories/${result.storyId}`);
-    } catch (error) {
-      console.error("Failed to add the story:", error);
-      setError("Failed to add the story.");
+      if (onStoryAdded) onStoryAdded(newStory);
+      navigate(`/stories/${newStory.storyId}`);
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again.");
     }
   };
 
   return (
-    <>
-      <div className="add-story-container">
-        <h1>Create a New Story</h1>
-        {error && <p className="error-message">{error}</p>}{" "}
-        <form onSubmit={handleSubmit} className="add-story-form">
-          <div className="form-group">
-            <label htmlFor="title">Title</label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="summary">Summary</label>
-            <textarea
-              id="summary"
-              value={summary}
-              onChange={(e) => setSummary(e.target.value)}
-              placeholder="Write a short summary (optional)"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="genre">Genre</label>
-            <select
-              id="genre"
-              value={genre}
-              onChange={(e) => setGenre(e.target.value)}
-              required
-            >
-              <option value="">Select a genre</option>
-              {genres.map((g) => (
-                <option key={g} value={g}>
-                  {g}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label htmlFor="content">Content</label>
-            <ReactQuill
-              value={content}
-              onChange={setContent}
-              modules={{
-                toolbar: [
-                  [{ header: "1" }, { header: "2" }, { font: [] }],
-                  [{ size: [] }], // Font sizes
-                  ["bold", "italic", "underline", "strike", "blockquote"],
-                  [
-                    { list: "ordered" },
-                    { list: "bullet" },
-                    { indent: "-1" },
-                    { indent: "+1" },
-                  ],
-                  [{ align: "justify" }],
-                  ["clean"],
-                ],
-              }}
-              formats={[
-                "header",
-                "font",
-                "size",
-                "bold",
-                "italic",
-                "underline",
-                "strike",
-                "blockquote",
-                "list",
-                "bullet",
-                "indent",
-                "align",
-              ]}
-              placeholder="Write your story here..."
-              required
-              style={{ height: "500px" }}
-            />
-          </div>
-          <br />
-          <br />
-          <button type="submit" className="submit-button">
-            Submit Story
-          </button>{" "}
-        </form>{" "}
-      </div>
-    </>
+    <div className="bg-card dark:bg-card-dark p-6 rounded-lg shadow border border-border dark:border-border-dark">
+      <h2 className="text-xl font-bold mb-4 text-primary dark:text-primary-dark">
+        Add a New Story
+      </h2>
+
+      {error && (
+        <div className="mb-4 text-sm text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900 p-2 rounded">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-secondary dark:text-secondary-dark"
+          >
+            Title
+          </label>
+          <input
+            id="title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            className="mt-1 w-full rounded-md border border-border dark:border-border-dark bg-input dark:bg-input-dark text-input-text dark:text-input-text-dark px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="summary"
+            className="block text-sm font-medium text-secondary dark:text-secondary-dark"
+          >
+            Summary
+          </label>
+          <textarea
+            id="summary"
+            rows={3}
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
+            placeholder="Write a short summary (optional)"
+            className="mt-1 w-full rounded-md border border-border dark:border-border-dark bg-input dark:bg-input-dark text-input-text dark:text-input-text-dark px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="genre"
+            className="block text-sm font-medium text-secondary dark:text-secondary-dark"
+          >
+            Genre
+          </label>
+          <select
+            id="genre"
+            value={genre}
+            onChange={(e) => setGenre(e.target.value)}
+            required
+            className="mt-1 w-full rounded-md border border-border dark:border-border-dark bg-input dark:bg-input-dark text-input-text dark:text-input-text-dark px-3 py-2"
+          >
+            <option value="">Select a genre</option>
+            {genres.map((g) => (
+              <option key={g} value={g}>
+                {g}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-secondary dark:text-secondary-dark mb-2">
+            Content
+          </label>
+          <RichTextEditor
+            value={content}
+            onChange={setContent}
+            height="400px"
+          />
+        </div>
+
+        <div className="pt-4 flex justify-end">
+          <button
+            type="submit"
+            className="bg-button dark:bg-button-dark hover:bg-button-hover dark:hover:bg-button-hover-dark text-white px-5 py-2 rounded-md shadow"
+          >
+            📚 Submit Story
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
