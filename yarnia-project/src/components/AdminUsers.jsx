@@ -74,33 +74,34 @@ export default function AdminUsersFeed() {
   };
 
   return (
-    <div className="admin-users-container">
-      <h2>All Users</h2>
-      {error && <p className="error">{error}</p>}
+    <div className="bg-surface dark:bg-surface-dark min-h-screen min-w-full">
+      <h2 className="text-primary dark:text-accent-dark text-2xl font-semibold mb-4">
+        All Users
+      </h2>
+      {error && (
+        <p className="text-red-500 dark:text-red-300 text-center mb-4">{error}</p>
+      )}
 
       <input
         type="text"
         placeholder="Search by username or email"
         value={searchTerm}
         onChange={handleSearchChange}
-        className="search-bar"
+        className="w-full p-2 mb-4 bg-input text-input-text dark:bg-input-dark dark:text-input-text-dark rounded-lg border border-border dark:border-border-dark focus:outline-none focus:ring-2 focus:ring-button-dark dark:focus:ring-button-hover-dark"
       />
-      <br />
-      <br />
-
+      
       {totalPages > 1 && (
-        <div className="pagination">
+        <div className="flex justify-center space-x-2 mb-4">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="pagination-button"
+            className="px-4 py-2 bg-button text-white rounded-lg hover:bg-button-hover dark:bg-button-dark dark:hover:bg-button-hover-dark disabled:opacity-50"
           >
             Previous
           </button>
 
           {Array.from({ length: totalPages }, (_, index) => {
             const pageNumber = index + 1;
-
             if (
               pageNumber === currentPage ||
               (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
@@ -109,61 +110,59 @@ export default function AdminUsersFeed() {
                 <button
                   key={pageNumber}
                   onClick={() => handlePageChange(pageNumber)}
-                  className={`pagination-button ${
-                    currentPage === pageNumber ? "active-page" : ""
-                  }`}
+                  className={`px-4 py-2 rounded-lg ${
+                    currentPage === pageNumber
+                      ? "bg-button text-white dark:bg-button-dark dark:text-white"
+                      : "bg-layer dark:bg-layer-dark text-primary dark:text-primary-dark"
+                  } hover:bg-button-hover dark:hover:bg-button-hover-dark`}
                 >
                   {pageNumber}
                 </button>
               );
             }
-
             return null;
           })}
 
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="pagination-button"
+            className="px-4 py-2 bg-button text-white rounded-lg hover:bg-button-hover dark:bg-button-dark dark:hover:bg-button-hover-dark disabled:opacity-50"
           >
             Next
           </button>
         </div>
       )}
 
-      <ul className="users-list">
+      <ul className="space-y-4">
         {currentUsers.length > 0 ? (
           currentUsers.map((user) => (
-            <li key={user.id} className="user-item">
-              <div className="user-content">
-                <div className="user-avatar">
+            <li key={user.id} className="p-4 bg-layer dark:bg-layer-dark rounded-lg shadow-sm flex justify-between items-center">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mr-4">
                   {user.username ? user.username.charAt(0).toUpperCase() : "U"}
                 </div>
-
-                <div className="user-details">
-                  <span className="user-name">
-                    <Link to={`/users/${user.id}`}>
-                      {user.username || "Unknown User"}
-                    </Link>
+                <div>
+                  <span className="block text-primary dark:text-accent-dark font-semibold">
+                    <Link to={`/users/${user.id}`}>{user.username || "Unknown User"}</Link>
                   </span>
-                  <span className="user-email">
+                  <span className="block text-secondary dark:text-secondary-dark">
                     {user.email || "No email available"}
                   </span>
-                  <span className="user-role">
+                  <span className="block text-sm text-primary dark:text-primary-dark">
                     {user.isAdmin ? "Admin" : "User"}
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => handleDeleteUser(user.id)}
-                className="delete-button"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
               >
                 Delete
               </button>
             </li>
           ))
         ) : (
-          <p>No users available.</p>
+          <p className="text-center text-primary dark:text-primary-dark">No users available.</p>
         )}
       </ul>
     </div>

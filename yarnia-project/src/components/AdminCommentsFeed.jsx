@@ -74,25 +74,28 @@ export default function AdminCommentsFeed() {
   };
 
   return (
-    <div className="admin-comments-container">
-      <h2>All Comments</h2>
-      {error && <p className="error">{error}</p>}
+<div className="bg-surface dark:bg-surface-dark min-h-screen min-w-full">      <h2 className="text-primary dark:text-accent-dark text-2xl font-semibold mb-4">
+        All Comments
+      </h2>
+      {error && (
+        <p className="text-red-500 dark:text-red-300 text-center mb-4">{error}</p>
+      )}
       {/* Search Bar */}
       <input
         type="text"
         placeholder="Search comments..."
         value={searchQuery}
         onChange={handleSearch}
-        className="search-bar"
+        className="w-full p-2 mb-4 bg-input text-input-text dark:bg-input-dark dark:text-input-text-dark rounded-lg border border-border dark:border-border-dark focus:outline-none focus:ring-2 focus:ring-button-dark dark:focus:ring-button-hover-dark"
       />
       <br />
       <br />
       {totalPages > 1 && (
-        <div className="pagination">
+        <div className="flex justify-center space-x-2 mb-4">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="pagination-button"
+            className="px-4 py-2 bg-button text-white rounded-lg hover:bg-button-hover dark:bg-button-dark dark:hover:bg-button-hover-dark disabled:opacity-50"
           >
             Previous
           </button>
@@ -110,9 +113,11 @@ export default function AdminCommentsFeed() {
                 <button
                   key={pageNumber}
                   onClick={() => handlePageChange(pageNumber)}
-                  className={`pagination-button ${
-                    currentPage === pageNumber ? "active-page" : ""
-                  }`}
+                  className={`px-4 py-2 rounded-lg ${
+                    currentPage === pageNumber
+                      ? "bg-button text-white dark:bg-button-dark dark:text-white"
+                      : "bg-layer dark:bg-layer-dark text-primary dark:text-primary-dark"
+                  } hover:bg-button-hover dark:hover:bg-button-hover-dark`}
                 >
                   {pageNumber}
                 </button>
@@ -125,43 +130,41 @@ export default function AdminCommentsFeed() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="pagination-button"
+            className="px-4 py-2 bg-button text-white rounded-lg hover:bg-button-hover dark:bg-button-dark dark:hover:bg-button-hover-dark disabled:opacity-50"
           >
             Next
           </button>
         </div>
       )}
-      <ul className="comments-list">
+      <ul className="space-y-4">
         {currentComments.length > 0 ? (
           currentComments.map((comment) => (
-            <li key={comment.commentId} className="comment-item">
-              <div className="comment-content">
-                <div className="comment-avatar">
+            <li key={comment.commentId} className="p-4 bg-layer dark:bg-layer-dark rounded-lg shadow-sm flex justify-between items-center">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mr-4">
                   {comment.user?.username
                     ? comment.user.username.charAt(0).toUpperCase()
                     : "U"}
                 </div>
-
-                <div className="comment-details">
-                  <span className="comment-username">
+                <div>
+                  <span className="block text-primary dark:text-accent-dark font-semibold">
                     {comment.user?.username || "Unknown User"}
                   </span>
-                  <p className="comment-text">
+                  <p className="block text-primary dark:text-primary-dark">
                     {comment.content || "No content available"}
                   </p>
                 </div>
               </div>
-
               <button
                 onClick={() => handleDeleteComment(comment.commentId)}
-                className="delete-button"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
               >
                 Delete
               </button>
             </li>
           ))
         ) : (
-          <p>No comments available.</p>
+          <p className="text-center text-primary dark:text-primary-dark">No comments available.</p>
         )}
       </ul>
     </div>
