@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api"; // Base URL for your API
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const clearLocalStorage = () => {
   localStorage.clear();
@@ -8,7 +8,7 @@ export async function fetchAllUsers() {
   try {
     const response = await fetch(`${API_URL}/users`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`, // Add token for authentication
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });
     if (!response.ok) {
