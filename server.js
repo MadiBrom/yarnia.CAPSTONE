@@ -797,7 +797,7 @@ app.post("/api/upload/profile_pic", (req, res) => {
       return res.status(500).send(err);
     }
     // Assume the server serves files from the "uploads" directory
-    res.json({ img_url: `http://localhost:3000/${filePath}` });
+    res.json({ img_url: `${API_URL}/${filePath}` });
   });
 });
 

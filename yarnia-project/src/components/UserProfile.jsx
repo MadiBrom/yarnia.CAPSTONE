@@ -51,7 +51,7 @@ export default function UserProfile() {
           <>
 <div className="mb-8 border-b pb-6 border-border dark:border-border-dark flex items-center space-x-6">
 <img
-  src={user.avatar ? `http://localhost:3000${user.avatar}` : DefaultAvatar}
+  src={user.avatar ? `${API_URL}${user.avatar}` : DefaultAvatar}
     alt={`${user.username}'s avatar`}
     className="w-24 h-24 rounded-full object-cover "
   />

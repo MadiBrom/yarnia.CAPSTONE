@@ -12,7 +12,7 @@ const StoryDetails = () => {
     const fetchStory = async () => {
       try {
         const response = await fetchWithAuth(
-          `http://localhost:3000/api/stories/${storyId}`
+          `${API_URL}/api/stories/${storyId}`
         );
         if (response.ok) {
           const data = await response.json();

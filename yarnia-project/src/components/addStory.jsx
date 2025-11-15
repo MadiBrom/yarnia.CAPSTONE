@@ -24,7 +24,7 @@ const AddStory = ({ onStoryAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/stories", {
+      const response = await fetch("${API_URL}/api/stories", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

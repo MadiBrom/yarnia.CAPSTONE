@@ -50,7 +50,7 @@ export async function deleteUsers(userId) {
 export const fetchStoryComments = async (storyId) => {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/stories/${storyId}/comments`
+      `${API_URL}/api/stories/${storyId}/comments`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch comments");

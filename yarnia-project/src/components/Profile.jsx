@@ -35,7 +35,7 @@ const Profile = ({ user, setUser }) => {
     formData.append("avatar", selectedFile);
   
     try {
-      const res = await fetch(`http://localhost:3000/api/users/${user.id}/avatar`, {
+      const res = await fetch(`${API_URL}/api/users/${user.id}/avatar`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -57,7 +57,7 @@ const Profile = ({ user, setUser }) => {
   const handleStoryDelete = async (storyId) => {
     if (!window.confirm("Are you sure you want to delete this story?")) return;
     try {
-      const response = await fetchWithAuth(`http://localhost:3000/api/stories/${storyId}`, {
+      const response = await fetchWithAuth(`${API_URL}/api/stories/${storyId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -73,7 +73,7 @@ const Profile = ({ user, setUser }) => {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetchWithAuth("http://localhost:3000/api/auth/me");
+      const response = await fetchWithAuth("${API_URL}/api/auth/me");
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
@@ -95,7 +95,7 @@ const Profile = ({ user, setUser }) => {
 
   const fetchUserStories = async (userId) => {
     try {
-      const response = await fetchWithAuth(`http://localhost:3000/api/users/${userId}/stories`);
+      const response = await fetchWithAuth(`${API_URL}/api/users/${userId}/stories`);
       if (response.ok) {
         setStories(await response.json());
       }
@@ -116,7 +116,7 @@ const Profile = ({ user, setUser }) => {
 
   const fetchUserComments = async (userId) => {
     try {
-      const response = await fetchWithAuth(`http://localhost:3000/api/users/${userId}/comments`);
+      const response = await fetchWithAuth(`${API_URL}/api/users/${userId}/comments`);
       if (response.ok) {
         setComments(await response.json());
       }
@@ -131,7 +131,7 @@ const Profile = ({ user, setUser }) => {
 
   const handleSave = async () => {
     try {
-      const response = await fetchWithAuth("http://localhost:3000/api/users/me", {
+      const response = await fetchWithAuth("${API_URL}/api/users/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -154,7 +154,7 @@ const Profile = ({ user, setUser }) => {
   const deleteUserAccount = async (authorId) => {
     if (!window.confirm("Are you sure you want to delete your account?")) return;
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${authorId}`, {
+      const response = await fetch(`${API_URL}/api/users/${authorId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -174,7 +174,7 @@ const Profile = ({ user, setUser }) => {
   const handleCommentDelete = async (commentId) => {
     if (!window.confirm("Delete this comment?")) return;
     try {
-      const response = await fetchWithAuth(`http://localhost:3000/api/comments/${commentId}`, {
+      const response = await fetchWithAuth(`${API_URL}/api/comments/${commentId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -196,7 +196,7 @@ const Profile = ({ user, setUser }) => {
         <aside className="bg-card dark:bg-card-dark p-4 rounded-lg shadow border border-border dark:border-border-dark">
           <h2 className="text-xl font-bold mb-4">Profile</h2>
           <img
-  src={user.avatar ? `http://localhost:3000${user.avatar}` : Avatar}
+  src={user.avatar ? `${API_URL}${user.avatar}` : Avatar}
   alt="Profile"
   className="w-24 h-24 rounded-full object-cover mb-4"
 />
