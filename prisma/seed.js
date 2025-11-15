@@ -18,7 +18,7 @@ const genres = [
 
 const seed = async () => {
   // Create 5 administrators
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 2; i++) {
     await prisma.user.create({
       data: {
         username: faker.internet.userName(),
@@ -34,7 +34,7 @@ const seed = async () => {
   const users = [];
 
   // Create 20 regular users
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 2; i++) {
     const user = await prisma.user.create({
       data: {
         username: faker.internet.userName(),
@@ -63,7 +63,7 @@ const seed = async () => {
       });
 
       // Create random number of comments on the story
-      for (let k = 0; k < getRandomNumber(0, 100); k++) {
+      for (let k = 0; k < getRandomNumber(0, 2); k++) {
         const randomUser = users[getRandomNumber(0, users.length - 1)];
 
         await prisma.comment.create({
@@ -77,7 +77,7 @@ const seed = async () => {
       }
 
       // Create random bookmarks for each story
-      for (let k = 0; k < getRandomNumber(0, 1000); k++) {
+      for (let k = 0; k < getRandomNumber(0, 2); k++) {
         const randomUser = users[getRandomNumber(0, users.length - 1)];
 
         // Check if bookmark already exists
