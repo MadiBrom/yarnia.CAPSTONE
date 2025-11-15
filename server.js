@@ -13,14 +13,25 @@ const bcrypt = require("bcryptjs");
 
 const JWT = process.env.JWT || "shhh";
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://yarnia.netlify.app",
+]
+
 
 app.use(express.json());
 app.use(require("morgan")("dev"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true,
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true)
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true)
+      }
+      return callback(new Error("Not allowed by CORS"))
+    },
+
   })
 );
 app.use((err, req, res, next) => {
