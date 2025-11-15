@@ -1,12 +1,10 @@
 require("dotenv").config();
-import { neon } from '@netlify/neon';
 const express = require("express");
 const app = express();
 const prisma = require("./prisma");
 const multer = require("multer");
 const cors = require("cors");
 const path = require("path");
-const sql = neon();
 
 const PORT = 3000;
 
@@ -31,8 +29,6 @@ app.use((err, req, res, next) => {
   const message = err.message ?? "Internal server error.";
   res.status(status).json({ message });
 });
-
-const [post] = await sql`SELECT * FROM posts WHERE id = ${post}`;
 
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif|webp/;
