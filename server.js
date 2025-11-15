@@ -14,7 +14,6 @@ const bcrypt = require("bcryptjs");
 const JWT = process.env.JWT || "shhh";
 
 const allowedOrigins = [
-  "http://localhost:5173",
   "https://yarnia.netlify.app",
 ]
 
