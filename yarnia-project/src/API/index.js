@@ -1,4 +1,4 @@
-const API_URL='https://yarnia.netlify.app'
+const API_URL='https://yarnia.netlify.app/api'
 
 export const clearLocalStorage = () => {
   localStorage.clear();
