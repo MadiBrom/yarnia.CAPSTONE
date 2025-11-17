@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchWithAuth } from "../API"; 
+import { API_URL, fetchWithAuth } from "../API"; 
 import DOMPurify from "dompurify";
 
 const StoryDetails = () => {

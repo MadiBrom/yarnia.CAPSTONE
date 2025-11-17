@@ -1,4 +1,4 @@
-const API_URL =  "https://yarnia.netlify.app";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export { API_URL };
 
 export const clearLocalStorage = () => {

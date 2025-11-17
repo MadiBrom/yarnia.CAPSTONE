@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchUserProfileById, fetchUserStoriesById } from "../API";
+import { API_URL, fetchUserProfileById, fetchUserStoriesById } from "../API";
 import DefaultAvatar from "./images/anonav.jpg";
 
 

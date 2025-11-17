@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RichTextEditor from "./RichText";
+import { API_URL } from "../API";
 
 const AddStory = ({ onStoryAdded }) => {
   const [title, setTitle] = useState("");
@@ -24,7 +25,7 @@ const AddStory = ({ onStoryAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("${API_URL}/stories", {
+      const response = await fetch(`${API_URL}/stories`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

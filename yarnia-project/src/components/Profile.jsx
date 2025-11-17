@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { fetchBookmarkedStories, fetchWithAuth } from "../API";
+import { API_URL, fetchBookmarkedStories, fetchWithAuth } from "../API";
 import Avatar from "./images/anonav.jpg";
 import AddStory from "./addStory"; 
 
@@ -73,7 +73,7 @@ const Profile = ({ user, setUser }) => {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetchWithAuth("${API_URL}/auth/me");
+      const response = await fetchWithAuth(`${API_URL}/auth/me`);
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
@@ -131,7 +131,7 @@ const Profile = ({ user, setUser }) => {
 
   const handleSave = async () => {
     try {
-      const response = await fetchWithAuth("${API_URL}/users/me", {
+      const response = await fetchWithAuth(`${API_URL}/users/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
