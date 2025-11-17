@@ -84,7 +84,6 @@ const authenticateUser = (req, res, next) => {
   }
 };
 
-// Middleware to check if the user is an admin
 const authenticateAdmin = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
@@ -105,10 +104,7 @@ const authenticateAdmin = (req, res, next) => {
   }
 };
 
-// API routes go here
-
-// `fetchAllStories`
-app.get("/api/stories", async (req, res) => {
+app.get("/stories", async (req, res) => {
   try {
     const stories = await prisma.story.findMany({
       include: {
@@ -129,7 +125,7 @@ app.get("/api/stories", async (req, res) => {
   }
 });
 
-app.get("/api/stories/:storyId", async (req, res, next) => {
+app.get("/stories/:storyId", async (req, res, next) => {
   const { storyId } = req.params;
 
   try {
@@ -153,7 +149,7 @@ app.get("/api/stories/:storyId", async (req, res, next) => {
   }
 });
 
-app.delete("/api/stories/:storyId", authenticateUser, async (req, res) => {
+app.delete("/stories/:storyId", authenticateUser, async (req, res) => {
   const { storyId } = req.params;
 
   try {
@@ -173,7 +169,7 @@ app.delete("/api/stories/:storyId", authenticateUser, async (req, res) => {
   }
 });
 
-app.post("/api/stories", authenticateUser, async (req, res) => {
+app.post("/stories", authenticateUser, async (req, res) => {
   const { title, summary, content, genre } = req.body;
 
   if (!title || !content || !genre) {
@@ -200,8 +196,8 @@ app.post("/api/stories", authenticateUser, async (req, res) => {
   }
 });
 
-// PUT (update) a story by ID
-app.put("/api/stories/:storyId", async (req, res, next) => {
+
+app.put("/stories/:storyId", async (req, res, next) => {
   const { storyId } = req.params;
   const { title, summary, content } = req.body;
 
@@ -230,8 +226,7 @@ app.put("/api/stories/:storyId", async (req, res, next) => {
   }
 });
 
-// GET all comments on individual story
-app.get("/api/stories/:storyId/comments", async (req, res, next) => {
+app.get("/stories/:storyId/comments", async (req, res, next) => {
   const { storyId } = req.params;
   try {
     const comments = await prisma.comment.findMany({
@@ -251,9 +246,8 @@ app.get("/api/stories/:storyId/comments", async (req, res, next) => {
   }
 });
 
-// POST new comment on individual story
 app.post(
-  "/api/stories/:storyId/comments",
+  "/stories/:storyId/comments",
   authenticateUser,
   async (req, res, next) => {
     const { storyId } = req.params;
@@ -264,7 +258,6 @@ app.post(
     }
 
     try {
-      // Create the comment in the database
       const newComment = await prisma.comment.create({
         data: {
           userId: req.user.id,
@@ -283,7 +276,7 @@ app.post(
   }
 );
 
-app.delete("/api/comments/:commentId", async (req, res) => {
+app.delete("/comments/:commentId", async (req, res) => {
   const { commentId } = req.params;
 
   try {
@@ -309,11 +302,9 @@ app.delete("/api/comments/:commentId", async (req, res) => {
   }
 });
 
-// GET all comments by specific user
-app.get("/api/users/:userId/comments", async (req, res, next) => {
+app.get("/users/:userId/comments", async (req, res, next) => {
   const { userId } = req.params;
   try {
-    // Fetch comments where the authorId matches the specified user
     const comments = await prisma.comment.findMany({
       where: {
         userId: parseInt(userId),
@@ -327,7 +318,7 @@ app.get("/api/users/:userId/comments", async (req, res, next) => {
   }
 });
 
-app.put("/api/users/me", authenticateUser, async (req, res, next) => {
+app.put("/users/me", authenticateUser, async (req, res, next) => {
   const { username, bio } = req.body;
 
   try {
@@ -342,8 +333,7 @@ app.put("/api/users/me", authenticateUser, async (req, res, next) => {
   }
 });
 
-// GET all comments in the database with user information
-app.get("/api/comments", authenticateAdmin, async (req, res, next) => {
+app.get("/comments", authenticateAdmin, async (req, res, next) => {
   try {
     const comments = await prisma.comment.findMany({
       include: {
@@ -359,9 +349,7 @@ app.get("/api/comments", authenticateAdmin, async (req, res, next) => {
   }
 });
 
-// Route to get all bookmarks for a specific user
-// Route to get all bookmarks for a specific user
-app.get("/api/users/:userId/bookmarks", async (req, res, next) => {
+app.get("/users/:userId/bookmarks", async (req, res, next) => {
   const { userId } = req.params;
 
   try {
@@ -376,7 +364,6 @@ app.get("/api/users/:userId/bookmarks", async (req, res, next) => {
       },
     });
 
-    // Return bookmarks with author information included
     res.json(bookmarks);
   } catch (err) {
     console.error("Error fetching bookmarks:", err);
@@ -384,8 +371,7 @@ app.get("/api/users/:userId/bookmarks", async (req, res, next) => {
   }
 });
 
-//Route to delete a bookmark from a story
-app.delete("/api/users/:userId/bookmarks/:storyId", async (req, res, next) => {
+app.delete("/users/:userId/bookmarks/:storyId", async (req, res, next) => {
   const { userId, storyId } = req.params;
 
   try {
@@ -417,7 +403,7 @@ app.delete("/api/users/:userId/bookmarks/:storyId", async (req, res, next) => {
   }
 });
 
-app.get("/api/users/:userId/stories/:storyId/bookmark", async (req, res) => {
+app.get("/users/:userId/stories/:storyId/bookmark", async (req, res) => {
   const { userId, storyId } = req.params;
 
   try {
@@ -441,9 +427,8 @@ app.get("/api/users/:userId/stories/:storyId/bookmark", async (req, res) => {
   }
 });
 
-// Route to get all bookmarks for a specific story
-app.get("/api/stories/:storyId/bookmarks", async (req, res, next) => {
-  const { storyId } = req.params; // Extract storyId from request params
+app.get("/stories/:storyId/bookmarks", async (req, res, next) => {
+  const { storyId } = req.params;
 
   try {
     const story = await prisma.story.findUnique({
@@ -454,7 +439,6 @@ app.get("/api/stories/:storyId/bookmarks", async (req, res, next) => {
       return res.status(404).json({ message: "Story not found." });
     }
 
-    // Find all bookmarks for the story
     const bookmarks = await prisma.bookmark.findMany({
       where: { storyId: parseInt(storyId) },
       include: {
@@ -468,7 +452,7 @@ app.get("/api/stories/:storyId/bookmarks", async (req, res, next) => {
   }
 });
 
-app.post("/api/stories/:storyId/bookmarks", async (req, res, next) => {
+app.post("/stories/:storyId/bookmarks", async (req, res, next) => {
   const { userId, storyId, createdAt } = req.body;
 
   try {
@@ -498,7 +482,7 @@ app.post("/api/stories/:storyId/bookmarks", async (req, res, next) => {
   }
 });
 
-app.get("/api/user/:authorId/bookmarks", async (req, res, next) => {
+app.get("/user/:authorId/bookmarks", async (req, res, next) => {
   const { bookmarkId } = req.params;
   try {
     const bookmark = await prisma.bookmark.findUnique({
@@ -514,41 +498,33 @@ app.get("/api/user/:authorId/bookmarks", async (req, res, next) => {
   }
 });
 
-// === Auth Routes ===
 
-// POST (create) a new user
-app.post("/api/auth/register", async (req, res, next) => {
+app.post("/auth/register", async (req, res, next) => {
   const { username, email, password, bio, isAdmin = false } = req.body;
 
   try {
-    // Validate input
+
     if (!username || !email || !password) {
       return res
         .status(400)
         .json({ message: "Username, email, and password are required." });
     }
-
-    // Check if user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return res.status(409).json({ message: "Email already in use." });
     }
 
-    // Hash password before storing
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create new user
     const newUser = await prisma.user.create({
       data: {
         username,
         email,
         password: hashedPassword,
         bio,
-        isAdmin, // Save the isAdmin field
+        isAdmin,
       },
     });
 
-    // Generate a token for the new user
     const token = generateToken(newUser);
 
     res.status(201).json({ message: "User registered successfully", token });
@@ -557,10 +533,8 @@ app.post("/api/auth/register", async (req, res, next) => {
   }
 });
 
-// Route to get all users (only accessible to admin users)
-app.get("/api/users", authenticateAdmin, async (req, res, next) => {
+app.get("/users", authenticateAdmin, async (req, res, next) => {
   try {
-    // Fetch all users from the database
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -578,7 +552,7 @@ app.get("/api/users", authenticateAdmin, async (req, res, next) => {
   }
 });
 
-app.get("/api/users/:authorId", async (req, res, next) => {
+app.get("/users/:authorId", async (req, res, next) => {
   const { authorId } = req.params;
 
   try {
@@ -603,7 +577,7 @@ app.get("/api/users/:authorId", async (req, res, next) => {
   }
 });
 
-app.delete("/api/users/:authorId", authenticateUser, async (req, res, next) => {
+app.delete("/users/:authorId", authenticateUser, async (req, res, next) => {
   const { authorId } = req.params;
 
   try {
@@ -612,7 +586,6 @@ app.delete("/api/users/:authorId", authenticateUser, async (req, res, next) => {
     });
 
     if (user) {
-      // User deleted successfully
       res.status(204).send();
     } else {
       res.status(404).json({ message: "User not found." });
@@ -623,8 +596,7 @@ app.delete("/api/users/:authorId", authenticateUser, async (req, res, next) => {
   }
 });
 
-// POST /api/auth/login - Login a user
-app.post("/api/auth/login", async (req, res, next) => {
+app.post("/auth/login", async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
@@ -648,8 +620,7 @@ app.post("/api/auth/login", async (req, res, next) => {
   }
 });
 
-// GET /api/auth/me - Get the authenticated user
-app.get("/api/auth/me", authenticateUser, async (req, res, next) => {
+app.get("/auth/me", authenticateUser, async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
@@ -660,9 +631,8 @@ app.get("/api/auth/me", authenticateUser, async (req, res, next) => {
   }
 });
 
-// Get new bookmarks in database
 
-app.get("/api/user/bookmarks", async (req, res, next) => {
+app.get("/user/bookmarks", async (req, res, next) => {
   const { bookmarkId } = req.params;
   try {
     const bookmark = await prisma.bookmark.findUnique({
@@ -678,9 +648,8 @@ app.get("/api/user/bookmarks", async (req, res, next) => {
   }
 });
 
-// POST /api/stories/:storyId/bookmarks
 
-app.post("/api/stories/:storyId/bookmarks", async (req, res, next) => {
+app.post("/stories/:storyId/bookmarks", async (req, res, next) => {
   const { userId, storyId } = req.body;
   try {
     if (!userId || !storyId) {
@@ -709,10 +678,9 @@ app.post("/api/stories/:storyId/bookmarks", async (req, res, next) => {
   }
 });
 
-// DELETE /api/stories/:storyId/bookmarks
 
 app.delete(
-  "/api/stories/:storyId/bookmarks/:bookmarkId",
+  "/stories/:storyId/bookmarks/:bookmarkId",
   async (req, res, next) => {
     const { storyId, bookmarkId } = req.params;
 
@@ -731,9 +699,7 @@ app.delete(
   }
 );
 
-// GET /api/user/:authorId/bookmarks
-
-app.get("/api/user/:authorId/bookmarks", async (req, res, next) => {
+app.get("/user/:authorId/bookmarks", async (req, res, next) => {
   const { bookmarkId } = req.params;
   try {
     const bookmark = await prisma.bookmark.findUnique({
@@ -749,13 +715,11 @@ app.get("/api/user/:authorId/bookmarks", async (req, res, next) => {
   }
 });
 
-// GET (`${API_URL}/users/${userId}/bookmarks`, {
-
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 
-app.get("/api/users/:userId/stories", async (req, res) => {
+app.get("/users/:userId/stories", async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -776,7 +740,7 @@ app.get("/api/users/:userId/stories", async (req, res) => {
   }
 });
 
-app.get("/api/users/:userId/comments", async (req, res) => {
+app.get("/users/:userId/comments", async (req, res) => {
   const { userId } = req.params;
   try {
     const comments = await prisma.comment.findMany({
@@ -789,19 +753,17 @@ app.get("/api/users/:userId/comments", async (req, res) => {
   }
 });
 
-app.post("/api/upload/profile_pic", (req, res) => {
+app.post("/upload/profile_pic", (req, res) => {
   const file = req.files.file;
   const filePath = `uploads/${file.name}`;
   file.mv(filePath, (err) => {
     if (err) {
       return res.status(500).send(err);
     }
-    // Assume the server serves files from the "uploads" directory
     res.json({ img_url: `${API_URL}/${filePath}` });
   });
 });
 
-// GET all comments on individual story
 app.get("/api/stories/:storyId/comments", async (req, res, next) => {
   const { storyId } = req.params;
   try {
@@ -822,7 +784,7 @@ app.get("/api/stories/:storyId/comments", async (req, res, next) => {
   }
 });
 
-app.put("/api/users/:id/avatar", upload.single("avatar"), async (req, res) => {
+app.put("/users/:id/avatar", upload.single("avatar"), async (req, res) => {
   try {
     const userId = parseInt(req.params.id);
     if (!req.file) {
@@ -838,7 +800,7 @@ app.put("/api/users/:id/avatar", upload.single("avatar"), async (req, res) => {
 
     res.json({ success: true, avatar: user.avatar });
   } catch (error) {
-    console.error("Avatar upload error:", error); // ← Watch for this
+    console.error("Avatar upload error:", error);
     res.status(500).json({ error: "Failed to upload avatar", details: error.message });
   }
 });
