@@ -64,7 +64,7 @@ export const fetchStoryComments = async (storyId) => {
 
 export async function fetchAllStories() {
   try {
-    const response = await fetch(`${API_URL}/stories`);
+    const response = await fetch(`${API_URL}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch stories: ${response.statusText}`);
     }
