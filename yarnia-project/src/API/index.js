@@ -1,4 +1,5 @@
-const API_URL='https://yarnia.netlify.app/api'
+const rawApiUrl = import.meta.env.VITE_API_URL;
+const API_URL = rawApiUrl.replace(/\/$/, "");
 
 export const clearLocalStorage = () => {
   localStorage.clear();
@@ -48,9 +49,7 @@ export async function deleteUsers(userId) {
 
 export const fetchStoryComments = async (storyId) => {
   try {
-    const response = await fetch(
-      `${API_URL}/api/stories/${storyId}/comments`
-    );
+    const response = await fetch(`${API_URL}/stories/${storyId}/comments`);
     if (!response.ok) {
       throw new Error("Failed to fetch comments");
     }
@@ -64,7 +63,7 @@ export const fetchStoryComments = async (storyId) => {
 
 export async function fetchAllStories() {
   try {
-    const response = await fetch(`${API_URL}`);
+    const response = await fetch(`${API_URL}/stories`);
     if (!response.ok) {
       throw new Error(`Failed to fetch stories: ${response.statusText}`);
     }
@@ -306,7 +305,7 @@ export const fetchBookmarkedStories = async (userId, token) => {
 };
 
 export const bookmarkStory = async (storyId, userId, token) => {
-  const response = await fetch(`${API_URL}/stories/${storyId}/bookmarks/`, {
+  const response = await fetch(`${API_URL}/stories/${storyId}/bookmarks`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -314,10 +313,10 @@ export const bookmarkStory = async (storyId, userId, token) => {
     },
     body: JSON.stringify({ storyId, userId }),
   });
+
   const result = await response.json();
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Failed to bookmark the story");
+    throw new Error(result.message || "Failed to bookmark the story");
   }
 
   return result;
