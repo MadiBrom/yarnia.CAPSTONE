@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.API_URL;
+const API_URL='https://yarnia.netlify.app'
 
 export const clearLocalStorage = () => {
   localStorage.clear();
