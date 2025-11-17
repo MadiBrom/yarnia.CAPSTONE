@@ -1,4 +1,4 @@
-const API_URL = "https://yarnia-capstone.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL;
 export { API_URL };
 
 export const clearLocalStorage = () => {
