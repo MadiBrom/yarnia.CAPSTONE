@@ -39,7 +39,6 @@ export async function deleteUsers(userId) {
       throw new Error(`Failed to delete user: ${response.status}`);
     }
 
-    // Assuming no content (204) response on successful delete
     return response.status === 204 ? null : await response.json();
   } catch (error) {
     console.error("Error deleting user:", error);
@@ -63,7 +62,6 @@ export const fetchStoryComments = async (storyId) => {
   }
 };
 
-// Fetch all stories from the API
 export async function fetchAllStories() {
   try {
     const response = await fetch(`${API_URL}/stories`);
@@ -77,7 +75,6 @@ export async function fetchAllStories() {
   }
 }
 
-// Fetch a single story by its ID
 export async function fetchSingleStory(storyId) {
   try {
     const response = await fetch(`${API_URL}/stories/${storyId}`);
@@ -101,7 +98,7 @@ export const deleteStory = async (storyId) => {
     const response = await fetch(`${API_URL}/stories/${storyId}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${token}`, // Ensure Bearer token is sent
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -116,7 +113,6 @@ export const deleteStory = async (storyId) => {
   }
 };
 
-// Fetch comments for a specific story
 export const fetchComments = async (storyId) => {
   try {
     const response = await fetch(`${API_URL}/stories/${storyId}/comments`);
@@ -132,7 +128,6 @@ export const fetchComments = async (storyId) => {
   }
 };
 
-// Post a new comment for a specific story
 export async function postComment(storyId, content) {
   const token = localStorage.getItem("token");
 
