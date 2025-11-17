@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
@@ -90,7 +89,6 @@ module.exports = {
           900: '#c6e1bf',
         },
 
-        // Light Mode Tokens
         surface: '#f1e5c7',
         layer: '#bcbd9a',
         card: '#ffffff',
@@ -110,23 +108,22 @@ module.exports = {
         tag: '#bcbd9a',
         badge: '#86956d',
 
-        // Refined Dark Mode Tokens
-'surface-dark': '#0e0f0c',            // near-black with moss undertone
-'layer-dark': '#1a1e17',              // soft mossy-charcoal layer
-'card-dark': '#1f271f',               // card with neutral green-gray hint
-'primary-dark': '#f1e5c7',            // warm cream for text
-'secondary-dark': '#aabca3',          // soft sage-gray
-'accent-dark': '#c4d3b4',             // pale leaf — for links/buttons
-'border-dark': '#3e4a39',             // earthy neutral border
-'input-dark': '#141814',              // lifted slightly from surface
+'surface-dark': '#0e0f0c',            
+'layer-dark': '#1a1e17',              
+'card-dark': '#1f271f',               
+'primary-dark': '#f1e5c7',            
+'secondary-dark': '#aabca3',          
+'accent-dark': '#c4d3b4',             
+'border-dark': '#3e4a39',             
+'input-dark': '#141814',             
 'input-text-dark': '#f1e5c7',
 'input-placeholder-dark': '#8d9b86',
-'button-dark': '#4b6042',             // green-gray olive
-'button-hover-dark': '#657f5d',       // brighter hover
+'button-dark': '#4b6042',            
+'button-hover-dark': '#657f5d',      
 'link-dark': '#c4d3b4',
 'nav-dark': '#1a1e17',
 'footer-dark': '#0e0f0c',
-'modal-dark': '#222a22',             // neutral olive shadow box
+'modal-dark': '#222a22',             
 'tag-dark': '#3e4a39',
 'badge-dark': '#8d9b86',
       },

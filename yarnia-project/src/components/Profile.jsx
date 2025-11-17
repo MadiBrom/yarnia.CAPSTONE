@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { fetchBookmarkedStories, fetchWithAuth } from "../API";
-import Avatar from "./images/anonav.jpg"; // Placeholder for avatar image
-import AddStory from "./addStory"; // adjust path if different
+import Avatar from "./images/anonav.jpg";
+import AddStory from "./addStory"; 
 
 
 const TABS = ["Bookmarks", "Comments", "Stories", "Add Story"];
@@ -35,7 +35,7 @@ const Profile = ({ user, setUser }) => {
     formData.append("avatar", selectedFile);
   
     try {
-      const res = await fetch(`${API_URL}/api/users/${user.id}/avatar`, {
+      const res = await fetch(`${API_URL}/users/${user.id}/avatar`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -57,7 +57,7 @@ const Profile = ({ user, setUser }) => {
   const handleStoryDelete = async (storyId) => {
     if (!window.confirm("Are you sure you want to delete this story?")) return;
     try {
-      const response = await fetchWithAuth(`${API_URL}/api/stories/${storyId}`, {
+      const response = await fetchWithAuth(`${API_URL}/stories/${storyId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -73,7 +73,7 @@ const Profile = ({ user, setUser }) => {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetchWithAuth("${API_URL}/api/auth/me");
+      const response = await fetchWithAuth("${API_URL}/auth/me");
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
@@ -95,7 +95,7 @@ const Profile = ({ user, setUser }) => {
 
   const fetchUserStories = async (userId) => {
     try {
-      const response = await fetchWithAuth(`${API_URL}/api/users/${userId}/stories`);
+      const response = await fetchWithAuth(`${API_URL}/users/${userId}/stories`);
       if (response.ok) {
         setStories(await response.json());
       }
@@ -116,7 +116,7 @@ const Profile = ({ user, setUser }) => {
 
   const fetchUserComments = async (userId) => {
     try {
-      const response = await fetchWithAuth(`${API_URL}/api/users/${userId}/comments`);
+      const response = await fetchWithAuth(`${API_URL}/users/${userId}/comments`);
       if (response.ok) {
         setComments(await response.json());
       }
@@ -131,7 +131,7 @@ const Profile = ({ user, setUser }) => {
 
   const handleSave = async () => {
     try {
-      const response = await fetchWithAuth("${API_URL}/api/users/me", {
+      const response = await fetchWithAuth("${API_URL}/users/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -154,7 +154,7 @@ const Profile = ({ user, setUser }) => {
   const deleteUserAccount = async (authorId) => {
     if (!window.confirm("Are you sure you want to delete your account?")) return;
     try {
-      const response = await fetch(`${API_URL}/api/users/${authorId}`, {
+      const response = await fetch(`${API_URL}/users/${authorId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -174,7 +174,7 @@ const Profile = ({ user, setUser }) => {
   const handleCommentDelete = async (commentId) => {
     if (!window.confirm("Delete this comment?")) return;
     try {
-      const response = await fetchWithAuth(`${API_URL}/api/comments/${commentId}`, {
+      const response = await fetchWithAuth(`${API_URL}/comments/${commentId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -192,7 +192,6 @@ const Profile = ({ user, setUser }) => {
   return (
     <div className="min-h-screen bg-surface dark:bg-surface-dark text-primary dark:text-primary-dark px-4 sm:px-6 lg:px-8 py-10">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-6">
-        {/* Sidebar */}
         <aside className="bg-card dark:bg-card-dark p-4 rounded-lg shadow border border-border dark:border-border-dark">
           <h2 className="text-xl font-bold mb-4">Profile</h2>
           <img
@@ -271,7 +270,6 @@ const Profile = ({ user, setUser }) => {
           </button>
         </aside>
   
-        {/* Main Content */}
         <main>
           <div className="flex border-b border-border dark:border-border-dark mb-6 space-x-6">
             {TABS.map((tab) => (
@@ -289,7 +287,6 @@ const Profile = ({ user, setUser }) => {
             ))}
           </div>
   
-          {/* Tab Content */}
           {activeTab === "Bookmarks" && (
             <section className="space-y-4">
               {bookmarks.length > 0 ? (

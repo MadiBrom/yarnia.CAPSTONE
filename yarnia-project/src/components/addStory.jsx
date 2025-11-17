@@ -24,7 +24,7 @@ const AddStory = ({ onStoryAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("${API_URL}/api/stories", {
+      const response = await fetch("${API_URL}/stories", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +130,7 @@ const AddStory = ({ onStoryAdded }) => {
             type="submit"
             className="bg-button dark:bg-button-dark hover:bg-button-hover dark:hover:bg-button-hover-dark text-white px-5 py-2 rounded-md shadow"
           >
-            📚 Submit Story
+          Submit Story
           </button>
         </div>
       </form>

@@ -9,7 +9,6 @@ export default function AdminCommentsFeed() {
   const [currentPage, setCurrentPage] = useState(1);
   const commentsPerPage = 100;
 
-  // Fetch all comments when the component mounts
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -24,10 +23,9 @@ export default function AdminCommentsFeed() {
     fetchComments();
   }, []);
 
-  // Handle delete action for comments
   const handleDeleteComment = async (commentId) => {
     try {
-      await deleteComment(null, commentId); // `null` for storyId, only passing commentId
+      await deleteComment(null, commentId);
       setComments((prevComments) =>
         prevComments.filter((comment) => comment.commentId !== commentId)
       );
@@ -40,7 +38,6 @@ export default function AdminCommentsFeed() {
     }
   };
 
-  // Handle search bar input changes
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
@@ -59,7 +56,6 @@ export default function AdminCommentsFeed() {
     setCurrentPage(1);
   };
 
-  // Pagination logic
   const indexOfLastComment = currentPage * commentsPerPage;
   const indexOfFirstComment = indexOfLastComment - commentsPerPage;
   const currentComments = filteredComments.slice(
@@ -68,7 +64,6 @@ export default function AdminCommentsFeed() {
   );
   const totalPages = Math.ceil(filteredComments.length / commentsPerPage);
 
-  // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -80,7 +75,6 @@ export default function AdminCommentsFeed() {
       {error && (
         <p className="text-red-500 dark:text-red-300 text-center mb-4">{error}</p>
       )}
-      {/* Search Bar */}
       <input
         type="text"
         placeholder="Search comments..."

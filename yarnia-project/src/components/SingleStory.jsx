@@ -277,8 +277,6 @@ export default function SingleStory({ user }) {
             )}
           </section>
         )}
-
-
       </article>
     </div>
   );

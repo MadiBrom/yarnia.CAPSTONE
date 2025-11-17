@@ -764,7 +764,7 @@ app.post("/upload/profile_pic", (req, res) => {
   });
 });
 
-app.get("/api/stories/:storyId/comments", async (req, res, next) => {
+app.get("/stories/:storyId/comments", async (req, res, next) => {
   const { storyId } = req.params;
   try {
     const comments = await prisma.comment.findMany({

@@ -10,7 +10,6 @@ export default function AdminUsersFeed() {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 20;
 
-  // Fetch all users when the component mounts
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -25,12 +24,11 @@ export default function AdminUsersFeed() {
     fetchUsers();
   }, []);
 
-  // Handle delete action for users
   const handleDeleteUser = async (userId) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this user's account, along with all their stories and comments? This action cannot be undone."
     );
-    if (!confirmDelete) return; // If the user cancels, exit the function
+    if (!confirmDelete) return;
     try {
       await deleteUsers(userId);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
@@ -43,7 +41,6 @@ export default function AdminUsersFeed() {
     }
   };
 
-  // Handle search input change
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
@@ -62,13 +59,11 @@ export default function AdminUsersFeed() {
     setCurrentPage(1);
   };
 
-  // Pagination logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-  // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };

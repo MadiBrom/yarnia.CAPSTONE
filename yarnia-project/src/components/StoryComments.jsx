@@ -25,10 +25,8 @@ const StoryComments = () => {
     getComments();
   }, [storyId]);
 
-  // Calculate the number of pages
   const totalPages = Math.ceil(comments.length / commentsPerPage);
 
-  // Get comments for the current page
   const indexOfLastComment = currentPage * commentsPerPage;
   const indexOfFirstComment = indexOfLastComment - commentsPerPage;
   const currentComments = comments.slice(
@@ -36,7 +34,6 @@ const StoryComments = () => {
     indexOfLastComment
   );
 
-  // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };

@@ -7,10 +7,8 @@ const Comments = ({ storyId, refreshComments }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Get the current logged-in user's ID from localStorage
   const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
-  // Fetch comments when the component mounts or when `storyId` changes
   useEffect(() => {
     const fetchStoryComments = async () => {
       setLoading(true);
@@ -30,7 +28,6 @@ const Comments = ({ storyId, refreshComments }) => {
     }
   }, [storyId, refreshComments]);
 
-  // Handle new comment submission
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     try {
@@ -43,12 +40,11 @@ const Comments = ({ storyId, refreshComments }) => {
     }
   };
 
-  // Handle deleting a comment
   const handleDeleteComment = async (commentId) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this comment?"
     );
-    if (!confirmDelete) return; // If the user cancels, exit the function
+    if (!confirmDelete) return;
     try {
       await deleteComment(storyId, commentId);
       refreshComments();

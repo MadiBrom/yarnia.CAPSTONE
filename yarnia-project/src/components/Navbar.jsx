@@ -46,7 +46,6 @@ const NavBar = ({ user, setUser, darkMode, setDarkMode }) => {
         ${darkMode ? "bg-nav-dark text-primary-dark border-border-dark" : "bg-nav text-primary border-border"}`}
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Left Section */}
         <div className="flex items-center space-x-4">
           <button
             onClick={handleDarkModeToggle}
@@ -62,7 +61,6 @@ const NavBar = ({ user, setUser, darkMode, setDarkMode }) => {
           <Link to="/" className="text-lg font-semibold hover:text-accent">Home</Link>
         </div>
 
-        {/* Center Logo */}
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <Link to="/">
             <img
@@ -73,7 +71,6 @@ const NavBar = ({ user, setUser, darkMode, setDarkMode }) => {
           </Link>
         </div>
 
-        {/* Right Section - Hamburger & Links */}
         <div className="sm:hidden">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -111,7 +108,6 @@ const NavBar = ({ user, setUser, darkMode, setDarkMode }) => {
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu */}
       {menuOpen && (
   <div className="absolute top-14 right-6 bg-input dark:bg-input-dark p-4 shadow-lg rounded-lg z-50 w-48 space-y-2 text-sm sm:hidden">
     {user ? (
