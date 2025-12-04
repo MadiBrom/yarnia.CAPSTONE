@@ -58,7 +58,6 @@ const NavBar = ({ user, setUser, darkMode, setDarkMode }) => {
               className="w-full h-full"
             />
           </button>
-          <Link to="/" className="text-lg font-semibold hover:text-accent">Home</Link>
         </div>
 
         <div className="absolute left-1/2 transform -translate-x-1/2">
