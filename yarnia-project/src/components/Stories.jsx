@@ -90,7 +90,7 @@ const Stories = () => {
 
   return (
     <div className="bg-surface dark:bg-surface-dark min-h-screen min-w-full">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-6 text-primary dark:text-primary-dark">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-col lg:flex-row gap-2 text-primary dark:text-primary-dark">
         <div className="lg:hidden sticky top-2 z-40 px-4">
           <div className="relative w-full">
             <div className="lg:hidden flex justify-end sticky top-2 z-40">
