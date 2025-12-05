@@ -201,12 +201,17 @@ const Stories = () => {
                     <p className="mt-2 text-sm"><strong>Genre:</strong> {story.genre}</p>
                     <p className="mt-1 text-sm"><strong>Summary:</strong> {story.summary}</p>
                   </div>
-                  <div className="flex flex-col items-center space-y-1">
-                    <span className="text-xs text-secondary dark:text-secondary-dark">🔖 {story._count?.bookmarks || 0}</span>
-                    <Link to={`/stories/${story.storyId}/comments`} className="text-xs text-secondary hover:text-accent dark:text-secondary-dark dark:hover:text-accent-dark">
-                      💬 {story._count?.comments || 0}
-                    </Link>
-                  </div>
+<div className="flex flex-row items-center space-x-1">
+  <span className="text-xs text-secondary dark:text-secondary-dark">
+    🔖 {story._count?.bookmarks || 0}
+  </span>
+  <Link
+    to={`/stories/${story.storyId}/comments`}
+    className="text-xs text-secondary hover:text-accent dark:text-secondary-dark dark:hover:text-accent-dark"
+  >
+    💬 {story._count?.comments || 0}
+  </Link>
+</div>
                 </div>
                 <button
                   onClick={() => handleReadMore(story.storyId)}

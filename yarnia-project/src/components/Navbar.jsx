@@ -65,7 +65,7 @@ const NavBar = ({ user, setUser, darkMode, setDarkMode }) => {
             <img
               src={Yarnia}
               alt="Yarnia Logo"
-              className="w-36 h-auto object-contain"
+              className="w-36 h-auto object-contain mt-4 mb-4"
             />
           </Link>
         </div>
